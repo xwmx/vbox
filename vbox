@@ -10,14 +10,23 @@ source "$(which bask)"
 
 desc list <<EOM
 Usage:
-  $_ME list [--running]
+  $_ME list [running|status]
+
+Arguments:
+  running  List all running VMs.
+  status   Display all VMs with basic status information.
 
 Description:
   List VirtualBox VMs.
 EOM
 list() {
-  if _contains "--running" "${command_argv[@]:-}"; then
+  if _contains "running" "${command_parameters[@]:-}"; then
     VBoxManage list runningvms
+  elif _contains "status" "${command_parameters[@]:-}"; then
+    VBoxManage list vms -l | \
+      grep -e ^Name: -e ^State | \
+      sed s/\ \ //g | \
+      cut -d: -f2-
   else
     VBoxManage list vms
   fi
