@@ -158,6 +158,17 @@ start() {
   fi
 }
 
+desc status <<EOM
+Usage:
+  $_ME status
+
+Description:
+  Alias for \`$_ME list status\`.
+EOM
+status() {
+  $_ME list status
+}
+
 desc stop <<EOM
 Usage:
   $_ME stop <name|uuid>
