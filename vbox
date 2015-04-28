@@ -44,6 +44,23 @@ stop() {
   VBoxManage controlvm "${id}" poweroff
 }
 
+desc show <<EOM
+Usage:
+  $_ME show <name|uuid>
+
+Description:
+  Command: \`VBoxManage showvminfo <vm>\`
+
+  Show information about a particular virtual machine.
+EOM
+show() {
+  local id="${1:-}"
+  if [[ -z "${id}" ]]; then
+    _die printf "Name or UUID not provided.\n"
+  fi
+  VBoxManage showvminfo "${id}"
+}
+
 desc start <<EOM
 Usage:
   $_ME start <name|uuid> [--headless]
