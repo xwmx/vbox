@@ -41,9 +41,9 @@ Description:
   List VirtualBox VMs.
 EOM
 list() {
-  if _contains "running" "${command_parameters[@]:-}"; then
+  if _contains "running" "${COMMAND_PARAMETERS[@]:-}"; then
     VBoxManage list runningvms
-  elif _contains "status" "${command_parameters[@]:-}"; then
+  elif _contains "status" "${COMMAND_PARAMETERS[@]:-}"; then
     VBoxManage list vms -l | \
       grep -e ^Name: -e ^State | \
       sed s/\ \ //g | \
@@ -140,7 +140,7 @@ start() {
   local headless=
   local id=
 
-  for arg in "${command_argv[@]:-}"; do
+  for arg in "${COMMAND_ARGV[@]:-}"; do
     case "${arg}" in
       --headless) headless=1;;
       *) id="${arg}";;
