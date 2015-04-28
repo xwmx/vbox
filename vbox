@@ -8,6 +8,10 @@
 
 source "$(which bask)"
 
+desc "HELP_HEADER" <<EOM
+vbox - A collection of shortcuts for VBoxManage
+EOM
+
 desc kill <<EOM
 Usage:
   $_ME kill <name|uuid>
