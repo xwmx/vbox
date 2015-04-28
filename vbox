@@ -8,6 +8,27 @@
 
 source "$(which bask)"
 
+desc kill <<EOM
+Usage:
+  $_ME kill <name|uuid>
+
+Description:
+  Command: \`VBoxManage controlvm <vm> poweroff\`
+
+  Has the same effect on a virtual machine as pulling the power cable on a real
+  computer. The state of the VM is not saved beforehand, and data may be lost.
+  (This is equivalent to selecting the "Close" item in the "Machine" menu of
+  the GUI or pressing the window's close button, and then selecting "Power off
+  the machine" in the dialog.)
+EOM
+kill() {
+  local id="${1:-}"
+  if [[ -z "${id}" ]]; then
+    _die printf "Name or UUID not provided.\n"
+  fi
+  VBoxManage controlvm "${id}" poweroff
+}
+
 desc list <<EOM
 Usage:
   $_ME list [running|status]
@@ -142,20 +163,19 @@ Usage:
   $_ME stop <name|uuid>
 
 Description:
-  Command: \`VBoxManage controlvm <vm> poweroff\`
+  Command: \`VBoxManage controlvm <vm> savestate\`
 
-  Has the same effect on a virtual machine as pulling the power cable on a real
-  computer. The state of the VM is not saved beforehand, and data may be lost.
-  (This is equivalent to selecting the "Close" item in the "Machine" menu of
-  the GUI or pressing the window's close button, and then selecting "Power off
-  the machine" in the dialog.)
+  Save the current state of the VM to disk and then stop the VM. (This is
+  equivalent to selecting the "Close" item in the "Machine" menu of the GUI or
+  pressing the window's close button, and then selecting "Save the machine
+  state" in the dialog.)
 EOM
 stop() {
   local id="${1:-}"
   if [[ -z "${id}" ]]; then
     _die printf "Name or UUID not provided.\n"
   fi
-  VBoxManage controlvm "${id}" poweroff
+  VBoxManage controlvm "${id}" savestate
 }
 
 _init
