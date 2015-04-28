@@ -90,7 +90,7 @@ Description:
   saved beforehand, and data may be lost. (This is equivalent to selecting the
   "Reset" item in the "Machine" menu of the GUI.)
 EOM
-stop() {
+reset() {
   local id="${1:-}"
   if [[ -z "${id}" ]]; then
     _die printf "Name or UUID not provided.\n"
