@@ -32,6 +32,26 @@ list() {
   fi
 }
 
+desc pause <<EOM
+Usage:
+  $_ME pause <name|uuid>
+
+Description:
+  Command: \`VBoxManage controlvm <vm> pause\`
+
+  Temporarily puts a virtual machine on hold, without changing its state for
+  good. The VM window will be painted in gray to indicate that the VM is
+  currently paused. (This is equivalent to selecting the "Pause" item in the
+  "Machine" menu of the GUI.)
+EOM
+pause() {
+  local id="${1:-}"
+  if [[ -z "${id}" ]]; then
+    _die printf "Name or UUID not provided.\n"
+  fi
+  VBoxManage controlvm "${id}" pause
+}
+
 desc reset <<EOM
 Usage:
   $_ME reset <name|uuid>
@@ -51,6 +71,24 @@ stop() {
     _die printf "Name or UUID not provided.\n"
   fi
   VBoxManage controlvm "${id}" poweroff
+}
+
+desc resume <<EOM
+Usage:
+  $_ME resume <name|uuid>
+
+Description:
+  Command: \`VBoxManage controlvm <vm> resume\`
+
+  Undo a previous pause command. (This is equivalent to selecting the "Resume"
+  item in the "Machine" menu of the GUI.)
+EOM
+resume() {
+  local id="${1:-}"
+  if [[ -z "${id}" ]]; then
+    _die printf "Name or UUID not provided.\n"
+  fi
+  VBoxManage controlvm "${id}" resume
 }
 
 desc show <<EOM
