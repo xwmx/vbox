@@ -1,0 +1,97 @@
+#!/usr/bin/env bash
+#########################################################################
+# vbox - a bask script
+#
+# Add this script and bask to your $PATH. For usage information, run:
+# vbox help
+#########################################################################
+
+source "$(which bask)"
+
+desc list <<EOM
+Usage:
+  $_ME list [--running]
+
+Description:
+  List VirtualBox VMs.
+EOM
+list() {
+  if _contains "--running" "${command_argv[@]:-}"; then
+    VBoxManage list runningvms
+  else
+    VBoxManage list vms
+  fi
+}
+
+desc reset <<EOM
+Usage:
+  $_ME reset <name|uuid>
+
+Description:
+  Command: \`VBoxManage controlvm <vm> reset\`
+
+  Has the same effect on a virtual machine as pressing the "Reset" button on a
+  real computer: a cold reboot of the virtual machine, which will restart and
+  boot the guest operating system again immediately. The state of the VM is not
+  saved beforehand, and data may be lost. (This is equivalent to selecting the
+  "Reset" item in the "Machine" menu of the GUI.)
+EOM
+stop() {
+  local id="${1:-}"
+  if [[ -z "${id}" ]]; then
+    _die printf "Name or UUID not provided.\n"
+  fi
+  VBoxManage controlvm "${id}" poweroff
+}
+
+desc start <<EOM
+Usage:
+  $_ME start <name|uuid> [--headless]
+
+Description:
+  Start the VM with the given name or UUID.
+EOM
+start() {
+  local headless=
+  local id=
+
+  for arg in "${command_argv[@]:-}"; do
+    case "${arg}" in
+      --headless) headless=1;;
+      *) id="${arg}";;
+    esac
+  done
+
+  if [[ -z "${id}" ]]; then
+    _die printf "Name or UUID not provided.\n"
+  fi
+
+  if [[ -n "${headless}" ]]; then
+    VBoxManage startvm "${id}" --type headless
+  else
+    VBoxManage startvm "${id}"
+  fi
+}
+
+desc stop <<EOM
+Usage:
+  $_ME stop <name|uuid>
+
+Description:
+  Command: \`VBoxManage controlvm <vm> poweroff\`
+
+  Has the same effect on a virtual machine as pulling the power cable on a real
+  computer. The state of the VM is not saved beforehand, and data may be lost.
+  (This is equivalent to selecting the "Close" item in the "Machine" menu of
+  the GUI or pressing the window's close button, and then selecting "Power off
+  the machine" in the dialog.)
+EOM
+stop() {
+  local id="${1:-}"
+  if [[ -z "${id}" ]]; then
+    _die printf "Name or UUID not provided.\n"
+  fi
+  VBoxManage controlvm "${id}" poweroff
+}
+
+_init
