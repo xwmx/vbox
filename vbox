@@ -9,7 +9,16 @@
 source "$(which bask)"
 
 desc "HELP_HEADER" <<EOM
-vbox - A collection of shortcuts for VBoxManage
+        _
+ __   _| |__   _____  __
+ \\\\ \\\\ / / '_ \\\\ / _ \\\\ \\\\/ /
+  \\\\ V /| |_) | (_) >  <
+   \\\\_/ |_.__/ \\\\___/_/\\\\_\\\\
+
+A collection of shortcuts for VBoxManage, the VirtualBox command line tool.
+
+The VBoxManage UI is a bit cryptic and unintuitive, IMHO, so these shortcuts
+provide a streamlined interface to the most common functionality.
 EOM
 
 desc kill <<EOM
