@@ -183,13 +183,38 @@ start() {
 
 desc "status" <<EOM
 Usage:
-  $_ME status
+  $_ME status [<name|uuid> [--long|-l]]
+
+Options:
+  -l --long  Display long-form status information for the specified VM.
 
 Description:
-  Alias for \`$_ME list status\`.
+  When no argument has been passed, this acts as an alias for
+  \`$_ME list status\` and displays the status for all of the VMs. When
+  passed a VM name or UUID, the status aka state of that VM is displayed.
 EOM
 status() {
-  $_ME list status
+  local id="${1:-}"
+  _debug "status() \$id: %s\n" "${id:-}"
+
+  if [[ -n "${id}" ]]
+  then
+    if _command_argv_includes "--long" || _command_argv_includes "-l"
+    then
+      $_ME show "${id}" | \
+        awk '/State:/ {for (i=2; i<NF; i++) printf $i " "; print $NF}'
+    else
+      # Only display state name. Using two `awk` statements since the state
+      # can be displayed with one or more word, which is viewed as multiple
+      # fields. Instead get all of the fields and then blank out everything
+      # after the first parenthesis.
+      $_ME show "${id}" | \
+        awk '/State:/ {for (i=2; i<NF; i++) printf $i " "; print $NF}' | \
+        awk '{gsub(/\(.*/,"");print}'
+    fi
+  else
+    $_ME list status
+  fi
 }
 
 desc "stop" <<EOM
