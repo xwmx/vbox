@@ -36,7 +36,8 @@ Description:
 EOM
 kill() {
   local id="${1:-}"
-  if [[ -z "${id}" ]]; then
+  if [[ -z "${id}" ]]
+  then
     _die printf "Name or UUID not provided.\n"
   fi
   VBoxManage controlvm "${id}" poweroff
@@ -54,9 +55,11 @@ Description:
   List VirtualBox VMs.
 EOM
 list() {
-  if _contains "running" "${_COMMAND_PARAMETERS[@]:-}"; then
+  if _contains "running" "${_COMMAND_PARAMETERS[@]:-}"
+  then
     VBoxManage list runningvms
-  elif _contains "status" "${_COMMAND_PARAMETERS[@]:-}"; then
+  elif _contains "status" "${_COMMAND_PARAMETERS[@]:-}"
+  then
     VBoxManage list vms -l | \
       grep -e ^Name: -e ^State | \
       sed s/\ \ //g | \
@@ -80,7 +83,8 @@ Description:
 EOM
 pause() {
   local id="${1:-}"
-  if [[ -z "${id}" ]]; then
+  if [[ -z "${id}" ]]
+  then
     _die printf "Name or UUID not provided.\n"
   fi
   VBoxManage controlvm "${id}" pause
@@ -101,7 +105,8 @@ Description:
 EOM
 reset() {
   local id="${1:-}"
-  if [[ -z "${id}" ]]; then
+  if [[ -z "${id}" ]]
+  then
     _die printf "Name or UUID not provided.\n"
   fi
   VBoxManage controlvm "${id}" poweroff
@@ -119,7 +124,8 @@ Description:
 EOM
 resume() {
   local id="${1:-}"
-  if [[ -z "${id}" ]]; then
+  if [[ -z "${id}" ]]
+  then
     _die printf "Name or UUID not provided.\n"
   fi
   VBoxManage controlvm "${id}" resume
@@ -136,7 +142,8 @@ Description:
 EOM
 show() {
   local id="${1:-}"
-  if [[ -z "${id}" ]]; then
+  if [[ -z "${id}" ]]
+  then
     _die printf "Name or UUID not provided.\n"
   fi
   VBoxManage showvminfo "${id}"
@@ -153,18 +160,21 @@ start() {
   local headless=
   local id=
 
-  for arg in "${_COMMAND_ARGV[@]:-}"; do
+  for arg in "${_COMMAND_ARGV[@]:-}"
+  do
     case "${arg}" in
       --headless) headless=1;;
       *) id="${arg}";;
     esac
   done
 
-  if [[ -z "${id}" ]]; then
+  if [[ -z "${id}" ]]
+  then
     _die printf "Name or UUID not provided.\n"
   fi
 
-  if [[ -n "${headless}" ]]; then
+  if [[ -n "${headless}" ]]
+  then
     VBoxManage startvm "${id}" --type headless
   else
     VBoxManage startvm "${id}"
@@ -196,7 +206,8 @@ Description:
 EOM
 stop() {
   local id="${1:-}"
-  if [[ -z "${id}" ]]; then
+  if [[ -z "${id}" ]]
+  then
     _die printf "Name or UUID not provided.\n"
   fi
   VBoxManage controlvm "${id}" savestate
