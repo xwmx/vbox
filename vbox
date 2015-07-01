@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-#########################################################################
+###############################################################################
 # vbox - a bask script
 #
 # Add this script and bask to your $PATH. For usage information, run:
 # vbox help
-#########################################################################
+###############################################################################
 
 source "$(which bask)"
 
@@ -20,6 +20,8 @@ A collection of shortcuts for VBoxManage, the VirtualBox command line tool.
 The VBoxManage UI is a bit cryptic and unintuitive, IMHO, so these shortcuts
 provide a streamlined interface to the most common functionality.
 EOM
+
+# ------------------------------------------------------------------------ kill
 
 desc "kill" <<EOM
 Usage:
@@ -42,6 +44,8 @@ kill() {
   fi
   VBoxManage controlvm "${id}" poweroff
 }
+
+# ------------------------------------------------------------------------ list
 
 desc "list" <<EOM
 Usage:
@@ -69,6 +73,8 @@ list() {
   fi
 }
 
+# ----------------------------------------------------------------------- pause
+
 desc "pause" <<EOM
 Usage:
   $_ME pause <name|uuid>
@@ -89,6 +95,8 @@ pause() {
   fi
   VBoxManage controlvm "${id}" pause
 }
+
+# ----------------------------------------------------------------------- reset
 
 desc "reset" <<EOM
 Usage:
@@ -112,6 +120,8 @@ reset() {
   VBoxManage controlvm "${id}" poweroff
 }
 
+# ---------------------------------------------------------------------- resume
+
 desc "resume" <<EOM
 Usage:
   $_ME resume <name|uuid>
@@ -131,6 +141,8 @@ resume() {
   VBoxManage controlvm "${id}" resume
 }
 
+# ------------------------------------------------------------------------ show
+
 desc "show" <<EOM
 Usage:
   $_ME show <name|uuid>
@@ -148,6 +160,8 @@ show() {
   fi
   VBoxManage showvminfo "${id}"
 }
+
+# ----------------------------------------------------------------------- start
 
 desc "start" <<EOM
 Usage:
@@ -180,6 +194,8 @@ start() {
     VBoxManage startvm "${id}"
   fi
 }
+
+# ---------------------------------------------------------------------- status
 
 desc "status" <<EOM
 Usage:
@@ -217,6 +233,8 @@ status() {
   fi
 }
 
+# ------------------------------------------------------------------------ stop
+
 desc "stop" <<EOM
 Usage:
   $_ME stop <name|uuid>
@@ -237,5 +255,9 @@ stop() {
   fi
   VBoxManage controlvm "${id}" savestate
 }
+
+###############################################################################
+# init
+###############################################################################
 
 _init
