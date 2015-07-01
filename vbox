@@ -21,7 +21,7 @@ The VBoxManage UI is a bit cryptic and unintuitive, IMHO, so these shortcuts
 provide a streamlined interface to the most common functionality.
 EOM
 
-desc kill <<EOM
+desc "kill" <<EOM
 Usage:
   $_ME kill <name|uuid>
 
@@ -43,7 +43,7 @@ kill() {
   VBoxManage controlvm "${id}" poweroff
 }
 
-desc list <<EOM
+desc "list" <<EOM
 Usage:
   $_ME list [running|status]
 
@@ -69,7 +69,7 @@ list() {
   fi
 }
 
-desc pause <<EOM
+desc "pause" <<EOM
 Usage:
   $_ME pause <name|uuid>
 
@@ -90,7 +90,7 @@ pause() {
   VBoxManage controlvm "${id}" pause
 }
 
-desc reset <<EOM
+desc "reset" <<EOM
 Usage:
   $_ME reset <name|uuid>
 
@@ -112,7 +112,7 @@ reset() {
   VBoxManage controlvm "${id}" poweroff
 }
 
-desc resume <<EOM
+desc "resume" <<EOM
 Usage:
   $_ME resume <name|uuid>
 
@@ -131,7 +131,7 @@ resume() {
   VBoxManage controlvm "${id}" resume
 }
 
-desc show <<EOM
+desc "show" <<EOM
 Usage:
   $_ME show <name|uuid>
 
@@ -149,7 +149,7 @@ show() {
   VBoxManage showvminfo "${id}"
 }
 
-desc start <<EOM
+desc "start" <<EOM
 Usage:
   $_ME start <name|uuid> [--headless]
 
@@ -181,7 +181,7 @@ start() {
   fi
 }
 
-desc status <<EOM
+desc "status" <<EOM
 Usage:
   $_ME status
 
@@ -192,7 +192,7 @@ status() {
   $_ME list status
 }
 
-desc stop <<EOM
+desc "stop" <<EOM
 Usage:
   $_ME stop <name|uuid>
 
