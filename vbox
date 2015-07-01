@@ -65,7 +65,7 @@ list() {
   elif _contains "status" "${_COMMAND_PARAMETERS[@]:-}"
   then
     VBoxManage list vms -l | \
-      grep -e ^Name: -e ^State | \
+      awk '/^Name:[ ]{5,}|^State:[ ]{5,}/ {print}' | \
       sed s/\ \ //g | \
       cut -d: -f2-
   else
