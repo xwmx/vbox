@@ -19,6 +19,9 @@ A collection of shortcuts for VBoxManage, the VirtualBox command line tool.
 
 The VBoxManage UI is a bit cryptic and unintuitive, IMHO, so these shortcuts
 provide a streamlined interface to the most common functionality.
+
+VBoxManage Documentation:
+https://www.virtualbox.org/manual/ch08.html
 EOM
 
 
