@@ -42,7 +42,7 @@ Example:
   $_ME forwarding add "ubuntu-vm" "tcp5000" "5000"
 
   Equivalent of:
-    VBoxManage controlvm ubuntu-vm \
+    VBoxManage controlvm ubuntu-vm \\\\
       natpf1 "tcp5000,tcp,127.0.0.1,5000,,5000"
 EOM
 # VBoxManage controlvm fields:
@@ -73,7 +73,8 @@ forwarding() {
   _debug printf "forwarding() \$_subcommand: %s\n" "${_subcommand:-}"
   if [[ -z "${_subcommand}" ]]
   then
-    _die printf "Subcommand missing or not recognized.\n"
+    $_ME help forwarding
+    exit 1
   fi
 
   _vm="${_arguments[1]:-}"
