@@ -22,13 +22,13 @@ streamlined interface to the most common functionality.
 EOM
 
 
-# --------------------------------------------------------------------- forward
+# ------------------------------------------------------------------ forwarding
 
-desc "forward" <<EOM
+desc "forwarding" <<EOM
 Usage:
-  $_ME forward add <vm-name> <rule-name> <port>
-  $_ME forward list <vm-name>
-  $_ME forward delete <vm-name> <rule-name>
+  $_ME forwarding add <vm-name> <rule-name> <port>
+  $_ME forwarding list <vm-name>
+  $_ME forwarding delete <vm-name> <rule-name>
 
 Subcommands:
   add     Add a new port forwarding rule.
@@ -39,7 +39,7 @@ Description:
   Manage port forwarding.
 
 Example:
-  $_ME forward add "ubuntu-vm" "tcp5000" "5000"
+  $_ME forwarding add "ubuntu-vm" "tcp5000" "5000"
 
   Equivalent of:
     VBoxManage controlvm ubuntu-vm \
@@ -49,7 +49,7 @@ EOM
 #
 # [--natpf<1-N> [<rulename>],tcp|udp,[<hostip>],
 #               <hostport>,[<guestip>],<guestport>]
-forward() {
+forwarding() {
   local _subcommand=
   local _arguments=()
 
@@ -70,14 +70,14 @@ forward() {
     esac
   done
 
-  _debug printf "forward() \$_subcommand: %s\n" "${_subcommand:-}"
+  _debug printf "forwarding() \$_subcommand: %s\n" "${_subcommand:-}"
   if [[ -z "${_subcommand}" ]]
   then
     _die printf "Subcommand missing or not recognized.\n"
   fi
 
   _vm="${_arguments[1]:-}"
-  _debug printf "forward() \$_vm: %s\n" "${_vm}"
+  _debug printf "forwarding() \$_vm: %s\n" "${_vm}"
   if [[ -z "${_vm}" ]]
   then
     _die printf "VM name missing.\n"
@@ -88,8 +88,8 @@ forward() {
       local _name="${_arguments[2]:-}"
       local _port="${_arguments[3]:-}"
 
-      _debug printf "forward() \$_arguments[2]: %s\n" "${_arguments[2]:-}"
-      _debug printf "forward() \$_arguments[3]: %s\n" "${_arguments[3]:-}"
+      _debug printf "forwarding() \$_arguments[2]: %s\n" "${_arguments[2]:-}"
+      _debug printf "forwarding() \$_arguments[3]: %s\n" "${_arguments[3]:-}"
 
       if [[ -z "${_name}" ]]
       then
