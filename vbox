@@ -17,8 +17,8 @@ desc "HELP_HEADER" <<EOM
 
 A collection of shortcuts for VBoxManage, the VirtualBox command line tool.
 
-The VBoxManage UI is a bit cryptic and unintuitive, IMHO, so these shortcuts
-provide a streamlined interface to the most common functionality.
+The VBoxManage UI is a bit unintuitive for me so these shortcuts provide a
+streamlined interface to the most common functionality.
 EOM
 
 
