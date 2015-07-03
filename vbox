@@ -19,9 +19,6 @@ A collection of shortcuts for VBoxManage, the VirtualBox command line tool.
 
 The VBoxManage UI is a bit cryptic and unintuitive, IMHO, so these shortcuts
 provide a streamlined interface to the most common functionality.
-
-VBoxManage Documentation:
-https://www.virtualbox.org/manual/ch08.html
 EOM
 
 
@@ -169,6 +166,27 @@ list() {
       cut -d: -f2-
   else
     VBoxManage list vms
+  fi
+}
+
+# ---------------------------------------------------------------------- manage
+
+desc "manage" <<EOM
+Usage:
+  $_ME manage [<general option>] <command>
+
+Description:
+  Alias for \`VBoxManage\`.
+
+  VBoxManage Documentation:
+    https://www.virtualbox.org/manual/ch08.html
+EOM
+manage() {
+  if [[ -z "${_COMMAND_PARAMETERS[@]:-}" ]]
+  then
+    VBoxManage
+  else
+    VBoxManage "${_COMMAND_PARAMETERS[@]:-}"
   fi
 }
 
