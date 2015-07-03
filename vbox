@@ -21,6 +21,102 @@ The VBoxManage UI is a bit cryptic and unintuitive, IMHO, so these shortcuts
 provide a streamlined interface to the most common functionality.
 EOM
 
+
+# --------------------------------------------------------------------- forward
+
+desc "forward" <<EOM
+Usage:
+  $_ME forward add <vm-name> <rule-name> <port>
+  $_ME forward list <vm-name>
+  $_ME forward delete <vm-name> <rule-name>
+
+Subcommands:
+  add     Add a new port forwarding rule.
+  list    List forwarding rules.
+  delete  Delete the specified rule.
+
+Description:
+  Manage port forwarding.
+
+Example:
+  $_ME forward add "ubuntu-vm" "tcp5000" "5000"
+
+  Equivalent of:
+    VBoxManage controlvm ubuntu-vm \
+      natpf1 "tcp5000,tcp,127.0.0.1,5000,,5000"
+EOM
+# VBoxManage controlvm fields:
+#
+# [--natpf<1-N> [<rulename>],tcp|udp,[<hostip>],
+#               <hostport>,[<guestip>],<guestport>]
+forward() {
+  local _subcommand=
+  local _arguments=()
+
+  for arg in "${_COMMAND_ARGV[@]:-}"
+  do
+    case "${arg}" in
+      add|list|delete)
+        if [[ -z "${_subcommand}" ]]
+        then
+          _subcommand="${arg}"
+        else
+          _arguments+=("${arg}")
+        fi
+        ;;
+      *)
+        _arguments+=("${arg}")
+        ;;
+    esac
+  done
+
+  _debug printf "forward() \$_subcommand: %s\n" "${_subcommand:-}"
+  if [[ -z "${_subcommand}" ]]
+  then
+    _die printf "Subcommand missing or not recognized.\n"
+  fi
+
+  _vm="${_arguments[1]:-}"
+  _debug printf "forward() \$_vm: %s\n" "${_vm}"
+  if [[ -z "${_vm}" ]]
+  then
+    _die printf "VM name missing.\n"
+  fi
+
+  case "$_subcommand" in
+    add)
+      local _name="${_arguments[2]:-}"
+      local _port="${_arguments[3]:-}"
+
+      _debug printf "forward() \$_arguments[2]: %s\n" "${_arguments[2]:-}"
+      _debug printf "forward() \$_arguments[3]: %s\n" "${_arguments[3]:-}"
+
+      if [[ -z "${_name}" ]]
+      then
+        _die printf "Rule name missing.\n"
+      fi
+      if [[ -z "${_port}" ]]
+      then
+        _die printf "Port missing.\n"
+      fi
+
+      VBoxManage controlvm "${_vm}" \
+        natpf1 "${_name},tcp,127.0.0.1,${_port},,${_port}"
+      ;;
+    list)
+      VBoxManage showvminfo "${_vm}" | awk '/NIC/ && /Rule/ {print}'
+      ;;
+    delete)
+      local _name="${_arguments[2]:-}"
+      if [[ -z "${_name}" ]]
+      then
+        _die printf "Rule name missing.\n"
+      fi
+      VBoxManage modifyvm "${_vm}" --natpf1 delete "${_name}"
+      ;;
+  esac
+}
+
 # ------------------------------------------------------------------------ kill
 
 desc "kill" <<EOM
