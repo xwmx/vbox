@@ -235,7 +235,7 @@ reset() {
   then
     _die printf "Name or UUID not provided.\n"
   fi
-  VBoxManage controlvm "${id}" poweroff
+  VBoxManage controlvm "${id}" reset
 }
 
 # ---------------------------------------------------------------------- resume
