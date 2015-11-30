@@ -9,11 +9,11 @@
 source "$(which bask)"
 
 desc "HELP_HEADER" <<EOM
-        _
- __   _| |__   _____  __
- \\\\ \\\\ / / '_ \\\\ / _ \\\\ \\\\/ /
-  \\\\ V /| |_) | (_) >  <
-   \\\\_/ |_.__/ \\\\___/_/\\\\_\\\\
+       _
+__   _| |__   _____  __
+\ \ / / '_ \ / _ \ \/ /
+ \ V /| |_) | (_) >  <
+  \_/ |_.__/ \___/_/\_\\
 
 A collection of shortcuts for VBoxManage, the VirtualBox command line tool.
 
