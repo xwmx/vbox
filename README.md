@@ -10,6 +10,34 @@ __   _| |__   _____  __
 
 A streamlined interface for VBoxManage, the VirtualBox command line tool.
 
+## Installation
+
+### Homebrew
+
+To install with [Homebrew](http://brew.sh/):
+
+```bash
+brew install alphabetum/taps/vbox
+```
+
+### bpkg
+
+To install with [bpkg](http://www.bpkg.io/):
+
+```bash
+bpkg install alphabetum/vbox
+```
+
+### Manual
+
+To install manually, simply add the `vbox` script to your `$PATH`. If
+you already have a `~/bin` directory, you can use the following command:
+
+```bash
+curl -L https://raw.github.com/alphabetum/vbox/master/vbox \
+  -o ~/bin/vbox && chmod +x ~/bin/vbox
+```
+
 ## Usage
 
 ```
