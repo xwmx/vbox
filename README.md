@@ -8,7 +8,7 @@ __   _| |__   _____  __
 
 # vbox
 
-A streamlined interface for VBoxManage, the VirtualBox command line tool.
+A streamlined interface for [VBoxManage](https://www.virtualbox.org/manual/ch08.html), the [VirtualBox](https://www.virtualbox.org/) command line tool.
 
 ## Installation
 
