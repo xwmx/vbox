@@ -502,6 +502,7 @@ _emojify_status() {
   if [[ -n "${_status_string}" ]]
   then
     _status_string="${_status_string//aborted/❕ aborted}"
+    _status_string="${_status_string//paused/⏸ paused}"
     _status_string="${_status_string//powered/⚫️ powered}"
     _status_string="${_status_string//running/✅ running}"
     _status_string="${_status_string//saved/💾 saved}"
