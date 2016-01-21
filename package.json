@@ -1,0 +1,8 @@
+{
+  "name": "vbox",
+  "version": "0.1.0-alpha",
+  "description": "A streamlined interface for VBoxManage, the VirtualBox command line tool.",
+  "global": true,
+  "install": "make install"
+}
+
