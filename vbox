@@ -617,11 +617,24 @@ A streamlined interface for VBoxManage, the VirtualBox command line tool.
 Version: $_VERSION
 
 Usage:
-  $_ME <command> [--command-options] [<arguments>]
-  $_ME -h | --help
-  $_ME --version
+  $_ME commands [--raw]
+  $_ME forwarding add <vm-name> <rule-name> <port>
+  $_ME forwarding list <vm-name>
+  $_ME forwarding delete <vm-name> <rule-name>
+  $_ME help [<command>] | -h | --help
+  $_ME kill <name|uuid>
+  $_ME list [running|status]
+  $_ME manage [<general option>] <command>
+  $_ME pause <name|uuid>
+  $_ME reset <name|uuid>
+  $_ME resume <name|uuid>
+  $_ME show <name|uuid>
+  $_ME start <name|uuid> [--headless]
+  $_ME status [<name|uuid> [--long|-l]]
+  $_ME stop <name|uuid>
+  $_ME version | --version
 
-Options:
+Global Options:
   -h --help  Display this help information.
   --version  Display version information.
 
