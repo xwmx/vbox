@@ -1,3 +1,3 @@
 # vbox
-A collection of shortcuts for VBoxManage, the VirtualBox command line tool.
 
+A streamlined interface for VBoxManage, the VirtualBox command line tool.
