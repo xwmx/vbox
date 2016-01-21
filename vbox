@@ -487,6 +487,31 @@ _piped_input() {
   ! _interactive_input
 }
 
+
+# _emojify_status()
+#
+# Usage:
+#   _emojify_status <string>
+#   echo <string> | _emojify_status
+#
+# Description:
+#   Add emoji to status messages.
+_emojify_status() {
+  local _status_string="${1:-}"
+
+  if [[ -n "${_status_string}" ]]
+  then
+    _status_string="${_status_string//aborted/❕ aborted}"
+    _status_string="${_status_string//powered/⚫️ powered}"
+    _status_string="${_status_string//running/✅ running}"
+    _status_string="${_status_string//saved/💾 saved}"
+
+    printf "%s\n" "$_status_string"
+  else
+    _die printf "Usage: _emojify_status <string>\n"
+  fi
+}
+
 ###############################################################################
 # desc
 ###############################################################################
@@ -801,10 +826,14 @@ list() {
     VBoxManage list runningvms
   elif _contains "status" "${_COMMAND_PARAMETERS[@]:-}"
   then
-    VBoxManage list vms -l | \
-      awk '/^Name:[ ]{5,}|^State:[ ]{5,}/ {print}' | \
-      sed s/\ \ //g | \
-      cut -d: -f2-
+    local _vm_status_list
+    _vm_status_list="$(
+      VBoxManage list vms -l \
+        | awk '/^Name:[ ]{5,}|^State:[ ]{5,}/ {print}' \
+        | sed s/\ \ //g \
+        | cut -d: -f2-
+    )"
+    _emojify_status "$_vm_status_list"
   else
     VBoxManage list vms
   fi
@@ -969,23 +998,29 @@ Description:
 EOM
 status() {
   local id="${1:-}"
+  local status_string=
   _debug "status() \$id: %s\n" "${id:-}"
 
   if [[ -n "${id}" ]]
   then
     if _command_argv_includes "--long" || _command_argv_includes "-l"
     then
-      $_ME show "${id}" | \
-        awk '/State:/ {for (i=2; i<NF; i++) printf $i " "; print $NF}'
+      status_string="$(
+        $_ME show "${id}" \
+          | awk '/State:/ {for (i=2; i<NF; i++) printf $i " "; print $NF}'
+      )"
     else
       # Only display state name. Using two `awk` statements since the state
       # can be displayed with one or more word, which is viewed as multiple
       # fields. Instead get all of the fields and then blank out everything
       # after the first parenthesis.
-      $_ME show "${id}" | \
-        awk '/State:/ {for (i=2; i<NF; i++) printf $i " "; print $NF}' | \
-        awk '{gsub(/\(.*/,"");print}'
+      status_string="$(
+        $_ME show "${id}" \
+          | awk '/State:/ {for (i=2; i<NF; i++) printf $i " "; print $NF}' \
+          | awk '{gsub(/\(.*/,"");print}'
+      )"
     fi
+    _emojify_status "${status_string}"
   else
     $_ME list status
   fi
