@@ -10,6 +10,9 @@ __   _| |__   _____  __
 
 A streamlined interface for [VBoxManage](https://www.virtualbox.org/manual/ch08.html), the [VirtualBox](https://www.virtualbox.org/) command line tool.
 
+`vbox` wraps `VBoxManage`, providing a simpler UI with a focus on frequently
+used commands.
+
 ## Installation
 
 ### Homebrew
