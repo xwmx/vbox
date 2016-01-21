@@ -46,17 +46,17 @@ Usage:
   vbox forwarding add <vm-name> <rule-name> <port>
   vbox forwarding list <vm-name>
   vbox forwarding delete <vm-name> <rule-name>
-  vbox help [<command>] | -h | --help
-  vbox kill <name|uuid>
-  vbox list [running|status]
+  vbox help   [<command>] | -h | --help
+  vbox kill   (<name> | <uuid>)
+  vbox list   [running | status]
   vbox manage [<general option>] <command>
-  vbox pause <name|uuid>
-  vbox reset <name|uuid>
-  vbox resume <name|uuid>
-  vbox show <name|uuid>
-  vbox start <name|uuid> [--headless]
-  vbox status [<name|uuid> [--long|-l]]
-  vbox stop <name|uuid>
+  vbox pause  (<name> | <uuid>)
+  vbox reset  (<name> | <uuid>)
+  vbox resume (<name> | <uuid>)
+  vbox show   (<name> | <uuid>)
+  vbox start  (<name> | <uuid>) [--headless]
+  vbox status [(<name> | <uuid>) [--long|-l]]
+  vbox stop   (<name> | <uuid>)
   vbox version | --version
 
 Global Options:
@@ -120,7 +120,7 @@ Description:
 
 ```
 Usage:
-  vbox kill <name|uuid>
+  vbox kill (<name> | <uuid>)
 
 Description:
   Command: `VBoxManage controlvm <vm> poweroff`
@@ -136,7 +136,7 @@ Description:
 
 ```
 Usage:
-  vbox list [running|status]
+  vbox list [running | status]
 
 Arguments:
   running  List all running VMs.
@@ -163,7 +163,7 @@ Description:
 
 ```
 Usage:
-  vbox pause <name|uuid>
+  vbox pause (<name> | <uuid>)
 
 Description:
   Command: `VBoxManage controlvm <vm> pause`
@@ -178,7 +178,7 @@ Description:
 
 ```
 Usage:
-  vbox reset <name|uuid>
+  vbox reset (<name> | <uuid>)
 
 Description:
   Command: `VBoxManage controlvm <vm> reset`
@@ -194,7 +194,7 @@ Description:
 
 ```
 Usage:
-  vbox resume <name|uuid>
+  vbox resume (<name> | <uuid>)
 
 Description:
   Command: `VBoxManage controlvm <vm> resume`
@@ -207,7 +207,7 @@ Description:
 
 ```
 Usage:
-  vbox show <name|uuid>
+  vbox show (<name> | <uuid>)
 
 Description:
   Command: `VBoxManage showvminfo <vm>`
@@ -219,7 +219,7 @@ Description:
 
 ```
 Usage:
-  vbox start <name|uuid> [--headless]
+  vbox start (<name> | <uuid>) [--headless]
 
 Description:
   Start the VM with the given name or UUID.
@@ -229,7 +229,7 @@ Description:
 
 ```
 Usage:
-  vbox status [<name|uuid> [--long|-l]]
+  vbox status [(<name> | <uuid>) [--long|-l]]
 
 Options:
   -l --long  Display long-form status information for the specified VM.
@@ -243,7 +243,7 @@ Description:
 
 ```
 Usage:
-  vbox stop <name|uuid>
+  vbox stop (<name> | <uuid>)
 
 Description:
   Command: `VBoxManage controlvm <vm> savestate`
@@ -258,7 +258,7 @@ Description:
 
 ```
 Usage:
-  vbox ( version | --version )
+  vbox (version | --version)
 
 Description:
   Display the current program version.

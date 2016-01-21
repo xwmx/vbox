@@ -582,7 +582,7 @@ _print_desc() {
 
 desc "version" <<EOM
 Usage:
-  $_ME ( version | --version )
+  $_ME (version | --version)
 
 Description:
   Display the current program version.
@@ -621,17 +621,17 @@ Usage:
   $_ME forwarding add <vm-name> <rule-name> <port>
   $_ME forwarding list <vm-name>
   $_ME forwarding delete <vm-name> <rule-name>
-  $_ME help [<command>] | -h | --help
-  $_ME kill <name|uuid>
-  $_ME list [running|status]
+  $_ME help   [<command>] | -h | --help
+  $_ME kill   (<name> | <uuid>)
+  $_ME list   [running | status]
   $_ME manage [<general option>] <command>
-  $_ME pause <name|uuid>
-  $_ME reset <name|uuid>
-  $_ME resume <name|uuid>
-  $_ME show <name|uuid>
-  $_ME start <name|uuid> [--headless]
-  $_ME status [<name|uuid> [--long|-l]]
-  $_ME stop <name|uuid>
+  $_ME pause  (<name> | <uuid>)
+  $_ME reset  (<name> | <uuid>)
+  $_ME resume (<name> | <uuid>)
+  $_ME show   (<name> | <uuid>)
+  $_ME start  (<name> | <uuid>) [--headless]
+  $_ME status [(<name> | <uuid>) [--long|-l]]
+  $_ME stop   (<name> | <uuid>)
   $_ME version | --version
 
 Global Options:
@@ -797,7 +797,7 @@ forwarding() {
 
 desc "kill" <<EOM
 Usage:
-  $_ME kill <name|uuid>
+  $_ME kill (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage controlvm <vm> poweroff\`
@@ -821,7 +821,7 @@ kill() {
 
 desc "list" <<EOM
 Usage:
-  $_ME list [running|status]
+  $_ME list [running | status]
 
 Arguments:
   running  List all running VMs.
@@ -874,7 +874,7 @@ manage() {
 
 desc "pause" <<EOM
 Usage:
-  $_ME pause <name|uuid>
+  $_ME pause (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage controlvm <vm> pause\`
@@ -897,7 +897,7 @@ pause() {
 
 desc "reset" <<EOM
 Usage:
-  $_ME reset <name|uuid>
+  $_ME reset (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage controlvm <vm> reset\`
@@ -921,7 +921,7 @@ reset() {
 
 desc "resume" <<EOM
 Usage:
-  $_ME resume <name|uuid>
+  $_ME resume (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage controlvm <vm> resume\`
@@ -942,7 +942,7 @@ resume() {
 
 desc "show" <<EOM
 Usage:
-  $_ME show <name|uuid>
+  $_ME show (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage showvminfo <vm>\`
@@ -962,7 +962,7 @@ show() {
 
 desc "start" <<EOM
 Usage:
-  $_ME start <name|uuid> [--headless]
+  $_ME start (<name> | <uuid>) [--headless]
 
 Description:
   Start the VM with the given name or UUID.
@@ -996,7 +996,7 @@ start() {
 
 desc "status" <<EOM
 Usage:
-  $_ME status [<name|uuid> [--long|-l]]
+  $_ME status [(<name> | <uuid>) [--long|-l]]
 
 Options:
   -l --long  Display long-form status information for the specified VM.
@@ -1048,7 +1048,7 @@ status() {
 
 desc "stop" <<EOM
 Usage:
-  $_ME stop <name|uuid>
+  $_ME stop (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage controlvm <vm> savestate\`
