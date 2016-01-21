@@ -999,7 +999,7 @@ EOM
 status() {
   local id="${1:-}"
   local status_string=
-  _debug "status() \$id: %s\n" "${id:-}"
+  _debug printf "status() \$id: %s\n" "${id:-}"
 
   if [[ -n "${id}" ]]
   then
