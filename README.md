@@ -46,7 +46,7 @@ Usage:
   vbox forwarding add <vm-name> <rule-name> <port>
   vbox forwarding list <vm-name>
   vbox forwarding delete <vm-name> <rule-name>
-  vbox help   [<command>] | -h | --help
+  vbox (help [<command>] | -h | --help)
   vbox kill   (<name> | <uuid>)
   vbox list   [running | status]
   vbox manage [<general option>] <command>
@@ -57,7 +57,7 @@ Usage:
   vbox start  (<name> | <uuid>) [--headless]
   vbox status [(<name> | <uuid>) [--long|-l]]
   vbox stop   (<name> | <uuid>)
-  vbox version | --version
+  vbox (version | --version)
 
 Global Options:
   -h --help  Display this help information.
