@@ -997,13 +997,21 @@ Description:
   passed a VM name or UUID, the status aka state of that VM is displayed.
 EOM
 status() {
-  local id="${1:-}"
+  local id=
   local status_string=
-  _debug printf "status() \$id: %s\n" "${id:-}"
+  local long=0
+
+  for arg in "${_COMMAND_ARGV[@]:1}"
+  do
+    case "${arg}" in
+      -l|--long) long=1;;
+      *) [[ -z "${id}" ]] && id="${arg}";;
+    esac
+  done
 
   if [[ -n "${id}" ]]
   then
-    if _command_argv_includes "--long" || _command_argv_includes "-l"
+    if ((long))
     then
       status_string="$(
         $_ME show "${id}" \
