@@ -58,7 +58,7 @@ _debug() {
     __DEBUG_COUNTER=$((__DEBUG_COUNTER+1))
     # Prefix debug message with "bug (U+1F41B)"
     printf "🐛  %s " "${__DEBUG_COUNTER}"
-    "$@"
+    "${@}"
     printf "――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――\n"
   fi
 }
@@ -71,7 +71,7 @@ _debug() {
 #
 # This is a shortcut for the _debug() function that simply echos the message.
 debug() {
-  _debug echo "$@"
+  _debug echo "${@}"
 }
 
 ###############################################################################
@@ -89,7 +89,7 @@ debug() {
 _die() {
   # Prefix die message with "cross mark (U+274C)", often displayed as a red x.
   printf "❌  "
-  "$@" 1>&2
+  "${@}" 1>&2
   exit 1
 }
 # die()
@@ -101,7 +101,7 @@ _die() {
 #
 # This is a shortcut for the _die() function that simply echos the message.
 die() {
-  _die echo "$@"
+  _die echo "${@}"
 }
 
 ###############################################################################
@@ -147,9 +147,9 @@ optstring=h
 # argument to the option, such as wget -qO-)
 unset options
 # while the number of arguments is greater than 0
-while (($#))
+while ((${#}))
 do
-  case $1 in
+  case ${1} in
     # if option is of type -ab
     -[!-]?*)
       # loop over each character starting with the second
@@ -158,11 +158,11 @@ do
         # extract 1 character from position 'i'
         c=${1:i:1}
         # add current char to options
-        options+=("-$c")
+        options+=("-${c}")
 
         # if option takes a required argument, and it's not the last char
         # make the rest of the string its argument
-        if [[ $optstring = *"$c:"* && ${1:i+1} ]]
+        if [[ ${optstring} = *"${c}:"* && ${1:i+1} ]]
         then
           options+=("${1:i+1}")
           break
@@ -177,12 +177,12 @@ do
     --)
       options+=(--endopts)
       shift
-      options+=("$@")
+      options+=("${@}")
       break
       ;;
     # otherwise, nothing special
     *)
-      options+=("$1")
+      options+=("${1}")
       ;;
   esac
 
@@ -200,17 +200,17 @@ unset options
 # command. This is essentially the same as the program arguments, minus those
 # that have been filtered out in the program option parsing loop. This array
 # is initialized with $0, which is the program's name.
-_COMMAND_ARGV=("$0")
+_COMMAND_ARGV=("${0}")
 # Initialize $_CMD and `$_USE_DEBUG`, which can continue to be blank depending
 # on what the program needs.
 _CMD=""
 _USE_DEBUG=0
 
-while [ $# -gt 0 ]
+while [ ${#} -gt 0 ]
 do
-  opt="$1"
+  opt="${1}"
   shift
-  case "$opt" in
+  case "${opt}" in
     -h|--help)
       _CMD="help"
       ;;
@@ -223,11 +223,11 @@ do
     *)
       # The first non-option argument is assumed to be the command name.
       # All subsequent arguments are added to $_COMMAND_ARGV.
-      if [[ -n $_CMD ]]
+      if [[ -n ${_CMD} ]]
       then
-        _COMMAND_ARGV+=("$opt")
+        _COMMAND_ARGV+=("${opt}")
       else
-        _CMD="$opt"
+        _CMD="${opt}"
       fi
       ;;
   esac
@@ -244,10 +244,18 @@ done
 _COMMAND_PARAMETERS=(${_COMMAND_ARGV[*]})
 unset _COMMAND_PARAMETERS[0]
 
-_debug printf "\$_CMD: %s\n" "$_CMD"
-_debug printf "\$_RAW_OPTIONS (one per line):\n%s\n" "$_RAW_OPTIONS"
-_debug printf "\$_COMMAND_ARGV: %s\n" "${_COMMAND_ARGV[*]}"
-_debug printf "\$_COMMAND_PARAMETERS: %s\n" "${_COMMAND_PARAMETERS[*]:-}"
+_debug printf \
+  "\${_CMD}: %s\n" \
+  "${_CMD}"
+_debug printf \
+  "\${_RAW_OPTIONS} (one per line):\n%s\n" \
+  "${_RAW_OPTIONS}"
+_debug printf \
+  "\${_COMMAND_ARGV[*]}: %s\n" \
+  "${_COMMAND_ARGV[*]}"
+_debug printf \
+  "\${_COMMAND_PARAMETERS[*]:-}: %s\n" \
+  "${_COMMAND_PARAMETERS[*]:-}"
 
 ###############################################################################
 # Environment
@@ -256,9 +264,9 @@ _debug printf "\$_COMMAND_PARAMETERS: %s\n" "${_COMMAND_PARAMETERS[*]:-}"
 # $_ME
 #
 # Set to the program's basename.
-_ME=$(basename "$0")
+_ME=$(basename "${0}")
 
-_debug printf "\$_ME: %s\n" "$_ME"
+_debug printf "\${_ME}: %s\n" "${_ME}"
 
 ###############################################################################
 # Load Commands
@@ -289,25 +297,25 @@ _load_commands() {
     # Each element has the format `declare -f function_name`, so set the name
     # to only the 'function_name' part of the string.
     local function_name
-    function_name=$(printf "%s" "$c" | awk '{ print $3 }')
+    function_name=$(printf "%s" "${c}" | awk '{ print $3 }')
 
-    _debug printf "_load_commands() \$function_name: %s\n" "$function_name"
+    _debug printf "_load_commands() \${function_name}: %s\n" "${function_name}"
 
     # Add the function name to the $_DEFINED_COMMANDS array unless it starts
     # with an underscore or is one of the desc(), debug(), or die() functions,
     # since these are treated as having 'private' visibility.
-    if ! ( [[ "$function_name" =~ ^_(.*)  ]] || \
-           [[ "$function_name" == "desc"  ]] || \
-           [[ "$function_name" == "debug" ]] || \
-           [[ "$function_name" == "die"   ]]
+    if ! ( [[ "${function_name}" =~ ^_(.*)  ]] || \
+           [[ "${function_name}" == "desc"  ]] || \
+           [[ "${function_name}" == "debug" ]] || \
+           [[ "${function_name}" == "die"   ]]
     )
     then
-      _DEFINED_COMMANDS+=("$function_name")
+      _DEFINED_COMMANDS+=("${function_name}")
     fi
   done
 
   _debug printf \
-    "commands() \$_DEFINED_COMMANDS:\n%s\n" \
+    "commands() \${_DEFINED_COMMANDS[*]:-}:\n%s\n" \
     "${_DEFINED_COMMANDS[*]:-}"
 }
 
@@ -325,24 +333,24 @@ _load_commands() {
 # NOTE: must be called at end of program after all commands have been defined.
 _main() {
   _debug printf "main(): entering...\n"
-  _debug printf "main() \$_CMD (upon entering): %s\n" "$_CMD"
+  _debug printf "main() \${_CMD} (upon entering): %s\n" "${_CMD}"
 
   # If $_CMD is blank, then set to `$DEFAULT_COMMAND`
-  if [[ -z $_CMD ]]
+  if [[ -z "${_CMD}" ]]
   then
-    _CMD="$DEFAULT_COMMAND"
+    _CMD="${DEFAULT_COMMAND}"
   fi
 
   # Load all of the commands.
   _load_commands
 
   # If the command is defined, run it, otherwise return an error.
-  if _contains "$_CMD" "${_DEFINED_COMMANDS[*]:-}"
+  if _contains "${_CMD}" "${_DEFINED_COMMANDS[*]:-}"
   then
     # Pass all comment arguments to the program except for the first ($0).
-    $_CMD "${_COMMAND_PARAMETERS[@]:-}"
+    ${_CMD} "${_COMMAND_PARAMETERS[@]:-}"
   else
-    _die printf "Unknown command: %s\n" "$_CMD"
+    _die printf "Unknown command: %s\n" "${_CMD}"
   fi
 }
 
@@ -362,7 +370,7 @@ _main() {
 # Other implementations, some with better performance:
 # http://stackoverflow.com/q/85880
 _function_exists() {
-  [ "$(type -t "$1")" == 'function' ]
+  [ "$(type -t "${1}")" == 'function' ]
 }
 
 # _command_exists()
@@ -377,7 +385,7 @@ _function_exists() {
 # Information on why `hash` is used here:
 # http://stackoverflow.com/a/677212
 _command_exists() {
-  hash "$1" 2>/dev/null
+  hash "${1}" 2>/dev/null
 }
 
 # _contains()
@@ -392,10 +400,10 @@ _contains() {
   local test_list=(${*:2})
   for _test_element in "${test_list[@]:-}"
   do
-    _debug printf "_contains() \$_test_element: %s\n" "$_test_element"
-    if [[ "$_test_element" == "$1" ]]
+    _debug printf "_contains() \${_test_element}: %s\n" "${_test_element}"
+    if [[ "${_test_element}" == "${1}" ]]
     then
-      _debug printf "_contains() match: %s\n" "$1"
+      _debug printf "_contains() match: %s\n" "${1}"
       return 0
     fi
   done
@@ -416,7 +424,7 @@ _join() {
   local target_array
   local dirty
   local clean
-  separator="$1"
+  separator="${1}"
   target_array=(${@:2})
   dirty="$(printf "${separator}%s"  "${target_array[@]}")"
   clean="${dirty:${#separator}}"
@@ -436,7 +444,7 @@ _join() {
 # This is a shortcut for simple cases where a command wants to check for the
 # presence of options quickly without parsing the options again.
 _command_argv_includes() {
-  _contains "$1" "${_COMMAND_ARGV[*]}"
+  _contains "${1}" "${_COMMAND_ARGV[*]}"
 }
 
 # _blank()
@@ -506,7 +514,7 @@ _emojify_status() {
     _status_string="${_status_string//running/✅ running}"
     _status_string="${_status_string//saved/💾 saved}"
 
-    printf "%s\n" "$_status_string"
+    printf "%s\n" "${_status_string}"
   else
     _die printf "Usage: _emojify_status <string>\n"
   fi
@@ -543,16 +551,16 @@ _emojify_status() {
 # escaping backslashes, which is more common.
 desc() {
   set +e
-  [[ -z $1 ]] && _die printf "desc: No command name specified.\n"
+  [[ -z ${1} ]] && _die printf "desc: No command name specified.\n"
   if [[ -n ${2:-} ]]
   then
-    read -d '' "_desc_$1" <<EOM
-$2
+    read -d '' "_desc_${1}" <<EOM
+${2}
 EOM
-    _debug printf "desc() set with argument: _desc_%s\n" "$1"
+    _debug printf "desc() set with argument: _desc_%s\n" "${1}"
   else
-    read -d '' "_desc_$1"
-    _debug printf "desc() set with pipe: _desc_%s\n" "$1"
+    read -d '' "_desc_${1}"
+    _debug printf "desc() set with pipe: _desc_%s\n" "${1}"
   fi
   set -e
 }
@@ -565,12 +573,12 @@ EOM
 # Prints the description for a given command, provided the description has been
 # set using the desc() function.
 _print_desc() {
-  local var="_desc_$1"
+  local var="_desc_${1}"
   if [[ -n ${!var:-} ]]
   then
     printf "%s\n" "${!var}"
   else
-    printf "No additional information for \`%s\`\n" "$1"
+    printf "No additional information for \`%s\`\n" "${1}"
   fi
 }
 
@@ -582,25 +590,25 @@ _print_desc() {
 
 desc "version" <<EOM
 Usage:
-  $_ME (version | --version)
+  ${_ME} (version | --version)
 
 Description:
   Display the current program version.
 
-  To save you the trouble, the current version is $_VERSION
+  To save you the trouble, the current version is ${_VERSION}
 EOM
 version() {
-  printf "%s\n" "$_VERSION"
+  printf "%s\n" "${_VERSION}"
 }
 
 # Help ########################################################################
 
 desc "help" <<EOM
 Usage:
-  $_ME help [<command>]
+  ${_ME} help [<command>]
 
 Description:
-  Display help information for $_ME or a specified command.
+  Display help information for ${_ME} or a specified command.
 EOM
 help() {
   if [[ ${#_COMMAND_ARGV[@]} = 1 ]]
@@ -614,37 +622,37 @@ __   _| |__   _____  __
 
 A streamlined interface for VBoxManage, the VirtualBox command line tool.
 
-Version: $_VERSION
+Version: ${_VERSION}
 
 Usage:
-  $_ME commands [--raw]
-  $_ME forwarding add <vm-name> <rule-name> <port>
-  $_ME forwarding list <vm-name>
-  $_ME forwarding delete <vm-name> <rule-name>
-  $_ME (help [<command>] | -h | --help)
-  $_ME kill   (<name> | <uuid>)
-  $_ME list   [running | status]
-  $_ME manage [<general option>] <command>
-  $_ME pause  (<name> | <uuid>)
-  $_ME reset  (<name> | <uuid>)
-  $_ME resume (<name> | <uuid>)
-  $_ME show   (<name> | <uuid>)
-  $_ME start  (<name> | <uuid>) [--headless]
-  $_ME status [(<name> | <uuid>) [--long|-l]]
-  $_ME stop   (<name> | <uuid>)
-  $_ME (version | --version)
+  ${_ME} commands [--raw]
+  ${_ME} forwarding add <vm-name> <rule-name> <port>
+  ${_ME} forwarding list <vm-name>
+  ${_ME} forwarding delete <vm-name> <rule-name>
+  ${_ME} (help [<command>] | -h | --help)
+  ${_ME} kill   (<name> | <uuid>)
+  ${_ME} list   [running | status]
+  ${_ME} manage [<general option>] <command>
+  ${_ME} pause  (<name> | <uuid>)
+  ${_ME} reset  (<name> | <uuid>)
+  ${_ME} resume (<name> | <uuid>)
+  ${_ME} show   (<name> | <uuid>)
+  ${_ME} start  (<name> | <uuid>) [--headless]
+  ${_ME} status [(<name> | <uuid>) [--long|-l]]
+  ${_ME} stop   (<name> | <uuid>)
+  ${_ME} (version | --version)
 
 Global Options:
   -h --help  Display this help information.
   --version  Display version information.
 
 Help:
-  $_ME help [<command>]
+  ${_ME} help [<command>]
 
 $(commands)
 EOM
   else
-    _print_desc "$1"
+    _print_desc "${1}"
   fi
 }
 
@@ -652,7 +660,7 @@ EOM
 
 desc "commands" <<EOM
 Usage:
-  $_ME commands [--raw]
+  ${_ME} commands [--raw]
 
 Options:
   --raw  Display the command list without formatting.
@@ -701,9 +709,9 @@ commands() {
 
 desc "forwarding" <<EOM
 Usage:
-  $_ME forwarding add <vm-name> <rule-name> <port>
-  $_ME forwarding list <vm-name>
-  $_ME forwarding delete <vm-name> <rule-name>
+  ${_ME} forwarding add <vm-name> <rule-name> <port>
+  ${_ME} forwarding list <vm-name>
+  ${_ME} forwarding delete <vm-name> <rule-name>
 
 Subcommands:
   add     Add a new port forwarding rule.
@@ -714,7 +722,7 @@ Description:
   Manage port forwarding.
 
 Example:
-  $_ME forwarding add "ubuntu-vm" "tcp5000" "5000"
+  ${_ME} forwarding add "ubuntu-vm" "tcp5000" "5000"
 
   Equivalent of:
     VBoxManage controlvm ubuntu-vm \\\\
@@ -745,27 +753,31 @@ forwarding() {
     esac
   done
 
-  _debug printf "forwarding() \$_subcommand: %s\n" "${_subcommand:-}"
+  _debug printf "forwarding() \${_subcommand}: %s\n" "${_subcommand:-}"
   if [[ -z "${_subcommand}" ]]
   then
-    $_ME help forwarding
+    ${_ME} help forwarding
     exit 1
   fi
 
   _vm="${_arguments[1]:-}"
-  _debug printf "forwarding() \$_vm: %s\n" "${_vm}"
+  _debug printf "forwarding() \${_vm}: %s\n" "${_vm}"
   if [[ -z "${_vm}" ]]
   then
     _die printf "VM name missing.\n"
   fi
 
-  case "$_subcommand" in
+  case "${_subcommand}" in
     add)
       local _name="${_arguments[2]:-}"
       local _port="${_arguments[3]:-}"
 
-      _debug printf "forwarding() \$_arguments[2]: %s\n" "${_arguments[2]:-}"
-      _debug printf "forwarding() \$_arguments[3]: %s\n" "${_arguments[3]:-}"
+      _debug printf \
+        "forwarding() \${_arguments[2]:-}: %s\n" \
+        "${_arguments[2]:-}"
+      _debug printf \
+        "forwarding() \${_arguments[3]:-}: %s\n" \
+        "${_arguments[3]:-}"
 
       if [[ -z "${_name}" ]]
       then
@@ -797,7 +809,7 @@ forwarding() {
 
 desc "kill" <<EOM
 Usage:
-  $_ME kill (<name> | <uuid>)
+  ${_ME} kill (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage controlvm <vm> poweroff\`
@@ -821,7 +833,7 @@ kill() {
 
 desc "list" <<EOM
 Usage:
-  $_ME list [running | status]
+  ${_ME} list [running | status]
 
 Arguments:
   running  List all running VMs.
@@ -843,7 +855,7 @@ list() {
         | sed s/\ \ //g \
         | cut -d: -f2-
     )"
-    _emojify_status "$_vm_status_list"
+    _emojify_status "${_vm_status_list}"
   else
     VBoxManage list vms
   fi
@@ -853,7 +865,7 @@ list() {
 
 desc "manage" <<EOM
 Usage:
-  $_ME manage [<general option>] <command>
+  ${_ME} manage [<general option>] <command>
 
 Description:
   Alias for \`VBoxManage\`.
@@ -874,7 +886,7 @@ manage() {
 
 desc "pause" <<EOM
 Usage:
-  $_ME pause (<name> | <uuid>)
+  ${_ME} pause (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage controlvm <vm> pause\`
@@ -897,7 +909,7 @@ pause() {
 
 desc "reset" <<EOM
 Usage:
-  $_ME reset (<name> | <uuid>)
+  ${_ME} reset (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage controlvm <vm> reset\`
@@ -921,7 +933,7 @@ reset() {
 
 desc "resume" <<EOM
 Usage:
-  $_ME resume (<name> | <uuid>)
+  ${_ME} resume (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage controlvm <vm> resume\`
@@ -942,7 +954,7 @@ resume() {
 
 desc "show" <<EOM
 Usage:
-  $_ME show (<name> | <uuid>)
+  ${_ME} show (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage showvminfo <vm>\`
@@ -962,7 +974,7 @@ show() {
 
 desc "start" <<EOM
 Usage:
-  $_ME start (<name> | <uuid>) [--headless]
+  ${_ME} start (<name> | <uuid>) [--headless]
 
 Description:
   Start the VM with the given name or UUID.
@@ -996,14 +1008,14 @@ start() {
 
 desc "status" <<EOM
 Usage:
-  $_ME status [(<name> | <uuid>) [--long|-l]]
+  ${_ME} status [(<name> | <uuid>) [--long|-l]]
 
 Options:
   -l --long  Display long-form status information for the specified VM.
 
 Description:
   When no argument has been passed, this acts as an alias for
-  \`$_ME list status\` and displays the status for all of the VMs. When
+  \`${_ME} list status\` and displays the status for all of the VMs. When
   passed a VM name or UUID, the status aka state of that VM is displayed.
 EOM
 status() {
@@ -1024,7 +1036,7 @@ status() {
     if ((long))
     then
       status_string="$(
-        $_ME show "${id}" \
+        ${_ME} show "${id}" \
           | awk '/State:/ {for (i=2; i<NF; i++) printf $i " "; print $NF}'
       )"
     else
@@ -1033,14 +1045,14 @@ status() {
       # fields. Instead get all of the fields and then blank out everything
       # after the first parenthesis.
       status_string="$(
-        $_ME show "${id}" \
+        ${_ME} show "${id}" \
           | awk '/State:/ {for (i=2; i<NF; i++) printf $i " "; print $NF}' \
           | awk '{gsub(/\(.*/,"");print}'
       )"
     fi
     _emojify_status "${status_string}"
   else
-    $_ME list status
+    ${_ME} list status
   fi
 }
 
@@ -1048,7 +1060,7 @@ status() {
 
 desc "stop" <<EOM
 Usage:
-  $_ME stop (<name> | <uuid>)
+  ${_ME} stop (<name> | <uuid>)
 
 Description:
   Command: \`VBoxManage controlvm <vm> savestate\`
