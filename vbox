@@ -626,6 +626,7 @@ Version: ${_VERSION}
 
 Usage:
   ${_ME} commands [--raw]
+  ${_ME} config [--path]
   ${_ME} forwarding add <vm-name> <rule-name> <port>
   ${_ME} forwarding list <vm-name>
   ${_ME} forwarding delete <vm-name> <rule-name>
@@ -710,6 +711,14 @@ commands() {
 desc "config" <<EOM
 Usage:
   ${_ME} config [--path]
+
+Options:
+  --path  Print the path to the configuration file, 'VirtualBox.xml'.
+
+Description:
+  When no argument has been passed, open the 'VirtualBox.xml' configuration
+  file in \`\$EDITOR\`, which is currently set to '${EDITOR}'. When the
+  \`--path\` option is specified, the path to 'VirtualBox.xml' is printed.
 EOM
 config() {
   local _config_path

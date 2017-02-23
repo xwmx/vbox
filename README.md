@@ -46,6 +46,7 @@ curl -L https://raw.github.com/alphabetum/vbox/master/vbox \
 ```
 Usage:
   vbox commands [--raw]
+  vbox config [--path]
   vbox forwarding add <vm-name> <rule-name> <port>
   vbox forwarding list <vm-name>
   vbox forwarding delete <vm-name> <rule-name>
@@ -83,6 +84,21 @@ Options:
 
 Description:
   Display the list of available commands.
+```
+
+#### `config`
+
+```
+Usage:
+  vbox config [--path]
+
+Options:
+  --path  Print the path to the configuration file, 'VirtualBox.xml'.
+
+Description:
+  When no argument has been passed, open the 'VirtualBox.xml' configuration
+  file in `$EDITOR`, which is currently set to ''. When the
+  `--path` option is specified, the path to 'VirtualBox.xml' is printed.
 ```
 
 #### `forwarding`
