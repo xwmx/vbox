@@ -705,6 +705,30 @@ commands() {
 #
 ###############################################################################
 
+# ----------------------------------------------------------------------- config
+
+desc "config" <<EOM
+Usage:
+  ${_ME} config [--path]
+EOM
+config() {
+  local _config_path
+
+  if [[ "${OSTYPE}" =~ ^darwin ]]
+  then
+    _config_path="${HOME}/Library/VirtualBox/VirtualBox.xml"
+  else
+    _config_path="${HOME}/.VirtualBox/VirtualBox.xml"
+  fi
+
+  if _command_argv_includes "--path"
+  then
+    printf "%s\n" "${_config_path}"
+  else
+    "${EDITOR}" "${_config_path}"
+  fi
+}
+
 # ------------------------------------------------------------------ forwarding
 
 desc "forwarding" <<EOM
