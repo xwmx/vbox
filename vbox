@@ -46,7 +46,7 @@ DEFAULT_COMMAND="${DEFAULT_COMMAND:-help}"
 # _debug()
 #
 # Usage:
-#   _debug printf "Debug info. Variable: %s\n" "$0"
+#   _debug printf "Debug info. Variable: %s\\n" "$0"
 #
 # A simple function for executing a specified command if the `$_USE_DEBUG`
 # variable has been set. The command is expected to print a message and
@@ -59,7 +59,7 @@ _debug() {
     # Prefix debug message with "bug (U+1F41B)"
     printf "🐛  %s " "${__DEBUG_COUNTER}"
     "${@}"
-    printf "――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――\n"
+    printf "―――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――――\\n"
   fi
 }
 # debug()
@@ -81,7 +81,7 @@ debug() {
 # _die()
 #
 # Usage:
-#   _die printf "Error message. Variable: %s\n" "$0"
+#   _die printf "Error message. Variable: %s\\n" "$0"
 #
 # A simple function for exiting with an error after executing the specified
 # command. The command is expected to print a message and should typically
@@ -245,16 +245,16 @@ _COMMAND_PARAMETERS=(${_COMMAND_ARGV[*]})
 unset _COMMAND_PARAMETERS[0]
 
 _debug printf \
-  "\${_CMD}: %s\n" \
+  "\${_CMD}: %s\\n" \
   "${_CMD}"
 _debug printf \
-  "\${_RAW_OPTIONS} (one per line):\n%s\n" \
+  "\${_RAW_OPTIONS} (one per line):\\n%s\\n" \
   "${_RAW_OPTIONS}"
 _debug printf \
-  "\${_COMMAND_ARGV[*]}: %s\n" \
+  "\${_COMMAND_ARGV[*]}: %s\\n" \
   "${_COMMAND_ARGV[*]}"
 _debug printf \
-  "\${_COMMAND_PARAMETERS[*]:-}: %s\n" \
+  "\${_COMMAND_PARAMETERS[*]:-}: %s\\n" \
   "${_COMMAND_PARAMETERS[*]:-}"
 
 ###############################################################################
@@ -266,7 +266,7 @@ _debug printf \
 # Set to the program's basename.
 _ME=$(basename "${0}")
 
-_debug printf "\${_ME}: %s\n" "${_ME}"
+_debug printf "\${_ME}: %s\\n" "${_ME}"
 
 ###############################################################################
 # Load Commands
@@ -283,8 +283,8 @@ _DEFINED_COMMANDS=()
 # Loads all of the commands sourced in the environment.
 _load_commands() {
 
-  _debug printf "_load_commands(): entering...\n"
-  _debug printf "_load_commands() declare -F:\n%s\n" "$(declare -F)"
+  _debug printf "_load_commands(): entering...\\n"
+  _debug printf "_load_commands() declare -F:\\n%s\\n" "$(declare -F)"
 
   # declare is a bash built-in shell function that, when called with the '-F'
   # option, displays all of the functions with the format
@@ -299,7 +299,7 @@ _load_commands() {
     local function_name
     function_name=$(printf "%s" "${c}" | awk '{ print $3 }')
 
-    _debug printf "_load_commands() \${function_name}: %s\n" "${function_name}"
+    _debug printf "_load_commands() \${function_name}: %s\\n" "${function_name}"
 
     # Add the function name to the $_DEFINED_COMMANDS array unless it starts
     # with an underscore or is one of the desc(), debug(), or die() functions,
@@ -315,7 +315,7 @@ _load_commands() {
   done
 
   _debug printf \
-    "commands() \${_DEFINED_COMMANDS[*]:-}:\n%s\n" \
+    "commands() \${_DEFINED_COMMANDS[*]:-}:\\n%s\\n" \
     "${_DEFINED_COMMANDS[*]:-}"
 }
 
@@ -332,8 +332,8 @@ _load_commands() {
 #
 # NOTE: must be called at end of program after all commands have been defined.
 _main() {
-  _debug printf "main(): entering...\n"
-  _debug printf "main() \${_CMD} (upon entering): %s\n" "${_CMD}"
+  _debug printf "main(): entering...\\n"
+  _debug printf "main() \${_CMD} (upon entering): %s\\n" "${_CMD}"
 
   # If $_CMD is blank, then set to `$DEFAULT_COMMAND`
   if [[ -z "${_CMD}" ]]
@@ -350,7 +350,7 @@ _main() {
     # Pass all comment arguments to the program except for the first ($0).
     ${_CMD} "${_COMMAND_PARAMETERS[@]:-}"
   else
-    _die printf "Unknown command: %s\n" "${_CMD}"
+    _die printf "Unknown command: %s\\n" "${_CMD}"
   fi
 }
 
@@ -400,10 +400,10 @@ _contains() {
   local test_list=(${*:2})
   for _test_element in "${test_list[@]:-}"
   do
-    _debug printf "_contains() \${_test_element}: %s\n" "${_test_element}"
+    _debug printf "_contains() \${_test_element}: %s\\n" "${_test_element}"
     if [[ "${_test_element}" == "${1}" ]]
     then
-      _debug printf "_contains() match: %s\n" "${1}"
+      _debug printf "_contains() match: %s\\n" "${1}"
       return 0
     fi
   done
@@ -514,9 +514,9 @@ _emojify_status() {
     _status_string="${_status_string//running/✅ running}"
     _status_string="${_status_string//saved/💾 saved}"
 
-    printf "%s\n" "${_status_string}"
+    printf "%s\\n" "${_status_string}"
   else
-    _die printf "Usage: _emojify_status <string>\n"
+    _die printf "Usage: _emojify_status <string>\\n"
   fi
 }
 
@@ -551,16 +551,16 @@ _emojify_status() {
 # escaping backslashes, which is more common.
 desc() {
   set +e
-  [[ -z ${1} ]] && _die printf "desc: No command name specified.\n"
+  [[ -z ${1} ]] && _die printf "desc: No command name specified.\\n"
   if [[ -n ${2:-} ]]
   then
     read -d '' "_desc_${1}" <<EOM
 ${2}
 EOM
-    _debug printf "desc() set with argument: _desc_%s\n" "${1}"
+    _debug printf "desc() set with argument: _desc_%s\\n" "${1}"
   else
     read -d '' "_desc_${1}"
-    _debug printf "desc() set with pipe: _desc_%s\n" "${1}"
+    _debug printf "desc() set with pipe: _desc_%s\\n" "${1}"
   fi
   set -e
 }
@@ -576,9 +576,9 @@ _print_desc() {
   local var="_desc_${1}"
   if [[ -n ${!var:-} ]]
   then
-    printf "%s\n" "${!var}"
+    printf "%s\\n" "${!var}"
   else
-    printf "No additional information for \`%s\`\n" "${1}"
+    printf "No additional information for \`%s\`\\n" "${1}"
   fi
 }
 
@@ -598,7 +598,7 @@ Description:
   To save you the trouble, the current version is ${_VERSION}
 EOM
 version() {
-  printf "%s\n" "${_VERSION}"
+  printf "%s\\n" "${_VERSION}"
 }
 
 # Help ########################################################################
@@ -672,10 +672,10 @@ EOM
 commands() {
   if _command_argv_includes "--raw"
   then
-    printf "%s\n" "${_DEFINED_COMMANDS[@]}"
+    printf "%s\\n" "${_DEFINED_COMMANDS[@]}"
   else
-    printf "Available commands:\n"
-    printf "  %s\n" "${_DEFINED_COMMANDS[@]}"
+    printf "Available commands:\\n"
+    printf "  %s\\n" "${_DEFINED_COMMANDS[@]}"
   fi
 }
 
@@ -701,7 +701,7 @@ commands() {
 #     - http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
 # EOM
 # example() {
-#   printf "Hello, World!\n"
+#   printf "Hello, World!\\n"
 # }
 #
 ###############################################################################
@@ -732,7 +732,7 @@ config() {
 
   if _command_argv_includes "--path"
   then
-    printf "%s\n" "${_config_path}"
+    printf "%s\\n" "${_config_path}"
   else
     "${EDITOR}" "${_config_path}"
   fi
@@ -786,7 +786,7 @@ forwarding() {
     esac
   done
 
-  _debug printf "forwarding() \${_subcommand}: %s\n" "${_subcommand:-}"
+  _debug printf "forwarding() \${_subcommand}: %s\\n" "${_subcommand:-}"
   if [[ -z "${_subcommand}" ]]
   then
     ${_ME} help forwarding
@@ -794,10 +794,10 @@ forwarding() {
   fi
 
   _vm="${_arguments[1]:-}"
-  _debug printf "forwarding() \${_vm}: %s\n" "${_vm}"
+  _debug printf "forwarding() \${_vm}: %s\\n" "${_vm}"
   if [[ -z "${_vm}" ]]
   then
-    _die printf "VM name missing.\n"
+    _die printf "VM name missing.\\n"
   fi
 
   case "${_subcommand}" in
@@ -806,19 +806,19 @@ forwarding() {
       local _port="${_arguments[3]:-}"
 
       _debug printf \
-        "forwarding() \${_arguments[2]:-}: %s\n" \
+        "forwarding() \${_arguments[2]:-}: %s\\n" \
         "${_arguments[2]:-}"
       _debug printf \
-        "forwarding() \${_arguments[3]:-}: %s\n" \
+        "forwarding() \${_arguments[3]:-}: %s\\n" \
         "${_arguments[3]:-}"
 
       if [[ -z "${_name}" ]]
       then
-        _die printf "Rule name missing.\n"
+        _die printf "Rule name missing.\\n"
       fi
       if [[ -z "${_port}" ]]
       then
-        _die printf "Port missing.\n"
+        _die printf "Port missing.\\n"
       fi
 
       VBoxManage controlvm "${_vm}" \
@@ -831,7 +831,7 @@ forwarding() {
       local _name="${_arguments[2]:-}"
       if [[ -z "${_name}" ]]
       then
-        _die printf "Rule name missing.\n"
+        _die printf "Rule name missing.\\n"
       fi
       VBoxManage modifyvm "${_vm}" --natpf1 delete "${_name}"
       ;;
@@ -857,7 +857,7 @@ kill() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
   then
-    _die printf "Name or UUID not provided.\n"
+    _die printf "Name or UUID not provided.\\n"
   fi
   VBoxManage controlvm "${id}" poweroff
 }
@@ -933,7 +933,7 @@ pause() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
   then
-    _die printf "Name or UUID not provided.\n"
+    _die printf "Name or UUID not provided.\\n"
   fi
   VBoxManage controlvm "${id}" pause
 }
@@ -957,7 +957,7 @@ reset() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
   then
-    _die printf "Name or UUID not provided.\n"
+    _die printf "Name or UUID not provided.\\n"
   fi
   VBoxManage controlvm "${id}" reset
 }
@@ -978,7 +978,7 @@ resume() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
   then
-    _die printf "Name or UUID not provided.\n"
+    _die printf "Name or UUID not provided.\\n"
   fi
   VBoxManage controlvm "${id}" resume
 }
@@ -998,7 +998,7 @@ show() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
   then
-    _die printf "Name or UUID not provided.\n"
+    _die printf "Name or UUID not provided.\\n"
   fi
   VBoxManage showvminfo "${id}"
 }
@@ -1026,7 +1026,7 @@ start() {
 
   if [[ -z "${id}" ]]
   then
-    _die printf "Name or UUID not provided.\n"
+    _die printf "Name or UUID not provided.\\n"
   fi
 
   if [[ -n "${headless}" ]]
@@ -1107,7 +1107,7 @@ stop() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
   then
-    _die printf "Name or UUID not provided.\n"
+    _die printf "Name or UUID not provided.\\n"
   fi
   VBoxManage controlvm "${id}" savestate
 }
