@@ -106,91 +106,25 @@ die() {
 
 ###############################################################################
 # Options
+#
+# NOTE: The `getops` builtin command only parses short options and BSD `getopt`
+# does not support long arguments (GNU `getopt` does), so the most portable
+# and clear way to parse options is often to just use a `while` loop.
+#
+# For a pure bash `getopt` function, try pure-getopt:
+#   https://github.com/agriffis/pure-getopt
+#
+# More info:
+#   http://wiki.bash-hackers.org/scripting/posparams
+#   http://www.gnu.org/software/libc/manual/html_node/Argument-Syntax.html
+#   http://stackoverflow.com/a/14203146
+#   http://stackoverflow.com/a/7948533
+#   https://stackoverflow.com/a/12026302
+#   https://stackoverflow.com/a/402410
 ###############################################################################
 
 # Get raw options for any commands that expect them.
-_RAW_OPTIONS="$*"
-
-# Steps:
-#
-# 1. set expected short options in `optstring` at beginning of the "Normalize
-#    Options" section,
-# 2. parse options in while loop in the "Parse Options" section.
-
-# Normalize Options ###########################################################
-
-# Source:
-#   https://github.com/e36freak/templates/blob/master/options
-
-# The first loop, even though it uses 'optstring', will NOT check if an
-# option that takes a required argument has the argument provided. That must
-# be done within the second loop and case statement, yourself. Its purpose
-# is solely to determine that -oARG is split into -o ARG, and not -o -A -R -G.
-
-# Set short options -----------------------------------------------------------
-
-# option string, for short options.
-#
-# Very much like getopts, expected short options should be appended to the
-# string here. Any option followed by a ':' takes a required argument.
-#
-# In this example, `-x` and `-h` are regular short options, while `o` is
-# assumed to have an argument and will be split if joined with the string,
-# meaning `-oARG` would be split to `-o ARG`.
-optstring=h
-
-# Normalize -------------------------------------------------------------------
-
-# iterate over options, breaking -ab into -a -b and --foo=bar into --foo bar
-# also turns -- into --endopts to avoid issues with things like '-o-', the '-'
-# should not indicate the end of options, but be an invalid option (or the
-# argument to the option, such as wget -qO-)
-unset options
-# while the number of arguments is greater than 0
-while ((${#}))
-do
-  case ${1} in
-    # if option is of type -ab
-    -[!-]?*)
-      # loop over each character starting with the second
-      for ((i=1; i<${#1}; i++))
-      do
-        # extract 1 character from position 'i'
-        c=${1:i:1}
-        # add current char to options
-        options+=("-${c}")
-
-        # if option takes a required argument, and it's not the last char
-        # make the rest of the string its argument
-        if [[ ${optstring} = *"${c}:"* && ${1:i+1} ]]
-        then
-          options+=("${1:i+1}")
-          break
-        fi
-      done
-      ;;
-    # if option is of type --foo=bar, split on first '='
-    --?*=*)
-      options+=("${1%%=*}" "${1#*=}")
-      ;;
-    # end of options, stop breaking them up
-    --)
-      options+=(--endopts)
-      shift
-      options+=("${@}")
-      break
-      ;;
-    # otherwise, nothing special
-    *)
-      options+=("${1}")
-      ;;
-  esac
-
-  shift
-done
-# set new positional parameters to altered options. Set default to blank.
-set -- "${options[@]:-}"
-unset options
+_RAW_OPTIONS="${*:-}"
 
 # Parse Options ###############################################################
 
@@ -206,11 +140,11 @@ _COMMAND_ARGV=("${0}")
 _CMD=""
 _USE_DEBUG=0
 
-while [ ${#} -gt 0 ]
+while [[ ${#} -gt 0 ]]
 do
-  opt="${1}"
+  __opt="${1}"
   shift
-  case "${opt}" in
+  case "${__opt}" in
     -h|--help)
       _CMD="help"
       ;;
@@ -223,11 +157,11 @@ do
     *)
       # The first non-option argument is assumed to be the command name.
       # All subsequent arguments are added to $_COMMAND_ARGV.
-      if [[ -n ${_CMD} ]]
+      if [[ -n "${_CMD}" ]]
       then
-        _COMMAND_ARGV+=("${opt}")
+        _COMMAND_ARGV+=("${__opt}")
       else
-        _CMD="${opt}"
+        _CMD="${__opt}"
       fi
       ;;
   esac
@@ -242,17 +176,11 @@ done
 # resulting slice is treated as a quoted string and doesn't easily get coaxed
 # into a new array.
 _COMMAND_PARAMETERS=(${_COMMAND_ARGV[*]})
-unset _COMMAND_PARAMETERS[0]
+unset "_COMMAND_PARAMETERS[0]"
 
-_debug printf \
-  "\${_CMD}: %s\\n" \
-  "${_CMD}"
-_debug printf \
-  "\${_RAW_OPTIONS} (one per line):\\n%s\\n" \
-  "${_RAW_OPTIONS}"
-_debug printf \
-  "\${_COMMAND_ARGV[*]}: %s\\n" \
-  "${_COMMAND_ARGV[*]}"
+_debug printf "\${_CMD}: %s\\n" "${_CMD}"
+_debug printf "\${_RAW_OPTIONS} (one per line):\\n%s\\n" "${_RAW_OPTIONS}"
+_debug printf "\${_COMMAND_ARGV[*]}: %s\\n" "${_COMMAND_ARGV[*]}"
 _debug printf \
   "\${_COMMAND_PARAMETERS[*]:-}: %s\\n" \
   "${_COMMAND_PARAMETERS[*]:-}"
@@ -290,27 +218,37 @@ _load_commands() {
   # option, displays all of the functions with the format
   # `declare -f function_name`. These are then assigned as elements in the
   # $function_list array.
-  local function_list=($(declare -F))
+  local _function_list
+  _function_list=($(declare -F))
 
-  for c in "${function_list[@]}"
+  _debug printf \
+    "_load_commands() \${_function_list[@]}: %s\\n" \
+    "${_function_list[@]}"
+
+  for __name in "${_function_list[@]}"
   do
+    _debug printf \
+      "_load_commands() \${__name}: %s\\n" \
+      "${__name}"
     # Each element has the format `declare -f function_name`, so set the name
     # to only the 'function_name' part of the string.
-    local function_name
-    function_name=$(printf "%s" "${c}" | awk '{ print $3 }')
+    local _function_name
+    _function_name=$(printf "%s" "${__name}" | awk '{ print $3 }')
 
-    _debug printf "_load_commands() \${function_name}: %s\\n" "${function_name}"
+    _debug printf \
+      "_load_commands() \${_function_name}: %s\\n" \
+      "${_function_name}"
 
     # Add the function name to the $_DEFINED_COMMANDS array unless it starts
     # with an underscore or is one of the desc(), debug(), or die() functions,
     # since these are treated as having 'private' visibility.
-    if ! ( [[ "${function_name}" =~ ^_(.*)  ]] || \
-           [[ "${function_name}" == "desc"  ]] || \
-           [[ "${function_name}" == "debug" ]] || \
-           [[ "${function_name}" == "die"   ]]
+    if ! ( [[ "${_function_name}" =~ ^_(.*)  ]] || \
+           [[ "${_function_name}" == "desc"  ]] || \
+           [[ "${_function_name}" == "debug" ]] || \
+           [[ "${_function_name}" == "die"   ]]
     )
     then
-      _DEFINED_COMMANDS+=("${function_name}")
+      _DEFINED_COMMANDS+=("${_function_name}")
     fi
   done
 
@@ -397,11 +335,11 @@ _command_exists() {
 #   0  If the item is included in the list.
 #   1  If not.
 _contains() {
-  local test_list=(${*:2})
-  for _test_element in "${test_list[@]:-}"
+  local _test_list=(${*:2})
+  for __test_element in "${_test_list[@]:-}"
   do
-    _debug printf "_contains() \${_test_element}: %s\\n" "${_test_element}"
-    if [[ "${_test_element}" == "${1}" ]]
+    _debug printf "_contains() \${__test_element}: %s\\n" "${__test_element}"
+    if [[ "${__test_element}" == "${1}" ]]
     then
       _debug printf "_contains() match: %s\\n" "${1}"
       return 0
@@ -413,22 +351,19 @@ _contains() {
 # _join()
 #
 # Usage:
-#   _join "," a b c
-#   _join "${an_array[@]}"
+#   _join <separator> <array>
 #
-# Returns:
-#   The list or array of items joined into a string with elements divided by
-#   the optional separator if one is provided.
+# Examples:
+#   _join , a "b c" d     => a,b c,d
+#   _join / var local tmp => var/local/tmp
+#   _join , "${FOO[@]}"   => a,b,c
+#
+# More Information:
+#   http://stackoverflow.com/a/17841619
 _join() {
-  local separator
-  local target_array
-  local dirty
-  local clean
-  separator="${1}"
-  target_array=(${@:2})
-  dirty="$(printf "${separator}%s"  "${target_array[@]}")"
-  clean="${dirty:${#separator}}"
-  printf "%s" "${clean}"
+  local IFS="${1}"
+  shift
+  printf "%s\\n" "${*}"
 }
 
 # _command_argv_includes()
@@ -527,13 +462,33 @@ _emojify_status() {
 # desc()
 #
 # Usage:
-#   desc command "description"
+#   desc <name> <description>
+#   desc --get <name>
 #
-# Create a description for a specified command name. The command description
-# text can be passed as the second argument or as standard input.
+# Options:
+#   --get  Print the description for <name> if one has been set.
 #
-# To make the description text available to other functions, desc() assigns the
-# text to a variable with the format $_desc_function_name
+# Examples:
+# ```
+#   desc "list" <<HEREDOC
+# Usage:
+#   ${_ME} list
+#
+# Description:
+#   List items.
+# HEREDOC
+#
+# desc --get "list"
+# ```
+#
+# Set or print a description for a specified command or function <name>. The
+# <description> text can be passed as the second argument or as standard input.
+#
+# To make the <description> text available to other functions, `desc()` assigns
+# the text to a variable with the format `$___desc_<name>`.
+#
+# When the `--get` option is used, the description for <name> is printed, if
+# one has been set.
 #
 # NOTE:
 #
@@ -541,44 +496,46 @@ _emojify_status() {
 # implementation and simplicity. There is an alternative assignment form
 # that could be used here:
 #
-# var="$(cat <<'EOM'
+# var="$(cat <<'HEREDOC'
 # some message
-# EOM
+# HEREDOC
 # )
 #
 # However, this form appears to require trailing space after backslases to
 # preserve newlines, which is unexpected. Using `read` simply requires
 # escaping backslashes, which is more common.
 desc() {
-  set +e
-  [[ -z ${1} ]] && _die printf "desc: No command name specified.\\n"
-  if [[ -n ${2:-} ]]
-  then
-    read -d '' "_desc_${1}" <<EOM
-${2}
-EOM
-    _debug printf "desc() set with argument: _desc_%s\\n" "${1}"
-  else
-    read -d '' "_desc_${1}"
-    _debug printf "desc() set with pipe: _desc_%s\\n" "${1}"
-  fi
-  set -e
-}
+  _debug printf "desc() \${*}: %s\\n" "$@"
+  [[ -z "${1:-}" ]] && _die printf "desc(): No command name specified.\\n"
 
-# _print_desc()
-#
-# Usage:
-#   _print_desc <command>
-#
-# Prints the description for a given command, provided the description has been
-# set using the desc() function.
-_print_desc() {
-  local var="_desc_${1}"
-  if [[ -n ${!var:-} ]]
-  then
-    printf "%s\\n" "${!var}"
-  else
-    printf "No additional information for \`%s\`\\n" "${1}"
+  if [[ "${1}" == "--get" ]]
+  then # get ------------------------------------------------------------------
+    [[ -z "${2:-}" ]] && _die printf "desc(): No command name specified.\\n"
+
+    local _name="${2:-}"
+    local _desc_var="___desc_${_name}"
+
+    if [[ -n "${!_desc_var:-}" ]]
+    then
+      printf "%s\\n" "${!_desc_var}"
+    else
+      printf "No additional information for \`%s\`\\n" "${_name}"
+    fi
+  else # set ------------------------------------------------------------------
+    if [[ -n "${2:-}" ]]
+    then # argument is present
+      read -r -d '' "___desc_${1}" <<HEREDOC
+${2}
+HEREDOC
+
+      _debug printf "desc() set with argument: \${___desc_%s}\\n" "${1}"
+    else # no argument is present, so assume piped input
+      # `read` exits with non-zero status when a delimeter is not found, so
+      # avoid errors by ending statement with `|| true`.
+      read -r -d '' "___desc_${1}" || true
+
+      _debug printf "desc() set with pipe: \${___desc_%s}\\n" "${1}"
+    fi
   fi
 }
 
@@ -588,7 +545,7 @@ _print_desc() {
 
 # Version #####################################################################
 
-desc "version" <<EOM
+desc "version" <<HEREDOC
 Usage:
   ${_ME} (version | --version)
 
@@ -596,24 +553,26 @@ Description:
   Display the current program version.
 
   To save you the trouble, the current version is ${_VERSION}
-EOM
+HEREDOC
 version() {
   printf "%s\\n" "${_VERSION}"
 }
 
 # Help ########################################################################
 
-desc "help" <<EOM
+desc "help" <<HEREDOC
 Usage:
   ${_ME} help [<command>]
 
 Description:
   Display help information for ${_ME} or a specified command.
-EOM
+HEREDOC
 help() {
-  if [[ ${#_COMMAND_ARGV[@]} = 1 ]]
+  if [[ "${1:-}" ]]
   then
-    cat <<EOM
+    desc --get "${1}"
+  else
+    cat <<HEREDOC
        _
 __   _| |__   _____  __
 \ \ / / '_ \ / _ \ \/ /
@@ -651,15 +610,14 @@ Help:
   ${_ME} help [<command>]
 
 $(commands)
-EOM
-  else
-    _print_desc "${1}"
+HEREDOC
   fi
 }
 
 # Command List ################################################################
 
-desc "commands" <<EOM
+
+desc "commands" <<HEREDOC
 Usage:
   ${_ME} commands [--raw]
 
@@ -668,7 +626,7 @@ Options:
 
 Description:
   Display the list of available commands.
-EOM
+HEREDOC
 commands() {
   if _command_argv_includes "--raw"
   then
@@ -689,7 +647,7 @@ commands() {
 # example() { : }   - The command called by the user.
 #
 #
-# desc example <<EOM
+# desc example <<HEREDOC
 #   Usage:
 #     $_ME example
 #
@@ -699,7 +657,7 @@ commands() {
 #     For usage formatting conventions see:
 #     - http://docopt.org/
 #     - http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap12.html
-# EOM
+# HEREDOC
 # example() {
 #   printf "Hello, World!\\n"
 # }
@@ -708,7 +666,7 @@ commands() {
 
 # ----------------------------------------------------------------------- config
 
-desc "config" <<EOM
+desc "config" <<HEREDOC
 Usage:
   ${_ME} config [--path]
 
@@ -719,7 +677,7 @@ Description:
   When no argument has been passed, open the 'VirtualBox.xml' configuration
   file in \`\$EDITOR\`, which is currently set to '${EDITOR}'. When the
   \`--path\` option is specified, the path to 'VirtualBox.xml' is printed.
-EOM
+HEREDOC
 config() {
   local _config_path
 
@@ -740,7 +698,7 @@ config() {
 
 # ------------------------------------------------------------------ forwarding
 
-desc "forwarding" <<EOM
+desc "forwarding" <<HEREDOC
 Usage:
   ${_ME} forwarding add <vm-name> <rule-name> <port>
   ${_ME} forwarding list <vm-name>
@@ -760,7 +718,7 @@ Example:
   Equivalent of:
     VBoxManage controlvm ubuntu-vm \\\\
       natpf1 "tcp5000,tcp,127.0.0.1,5000,,5000"
-EOM
+HEREDOC
 # VBoxManage controlvm fields:
 #
 # [--natpf<1-N> [<rulename>],tcp|udp,[<hostip>],
@@ -840,7 +798,7 @@ forwarding() {
 
 # ------------------------------------------------------------------------ kill
 
-desc "kill" <<EOM
+desc "kill" <<HEREDOC
 Usage:
   ${_ME} kill (<name> | <uuid>)
 
@@ -852,7 +810,7 @@ Description:
   (This is equivalent to selecting the "Close" item in the "Machine" menu of
   the GUI or pressing the window's close button, and then selecting "Power off
   the machine" in the dialog.)
-EOM
+HEREDOC
 kill() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
@@ -864,7 +822,7 @@ kill() {
 
 # ------------------------------------------------------------------------ list
 
-desc "list" <<EOM
+desc "list" <<HEREDOC
 Usage:
   ${_ME} list [running | status]
 
@@ -874,7 +832,7 @@ Arguments:
 
 Description:
   List VirtualBox VMs.
-EOM
+HEREDOC
 list() {
   if _contains "running" "${_COMMAND_PARAMETERS[@]:-}"
   then
@@ -896,7 +854,7 @@ list() {
 
 # ---------------------------------------------------------------------- manage
 
-desc "manage" <<EOM
+desc "manage" <<HEREDOC
 Usage:
   ${_ME} manage [<general option>] <command>
 
@@ -905,7 +863,7 @@ Description:
 
   VBoxManage Documentation:
     https://www.virtualbox.org/manual/ch08.html
-EOM
+HEREDOC
 manage() {
   if [[ -z "${_COMMAND_PARAMETERS[@]:-}" ]]
   then
@@ -917,7 +875,7 @@ manage() {
 
 # ----------------------------------------------------------------------- pause
 
-desc "pause" <<EOM
+desc "pause" <<HEREDOC
 Usage:
   ${_ME} pause (<name> | <uuid>)
 
@@ -928,7 +886,7 @@ Description:
   good. The VM window will be painted in gray to indicate that the VM is
   currently paused. (This is equivalent to selecting the "Pause" item in the
   "Machine" menu of the GUI.)
-EOM
+HEREDOC
 pause() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
@@ -940,7 +898,7 @@ pause() {
 
 # ----------------------------------------------------------------------- reset
 
-desc "reset" <<EOM
+desc "reset" <<HEREDOC
 Usage:
   ${_ME} reset (<name> | <uuid>)
 
@@ -952,7 +910,7 @@ Description:
   boot the guest operating system again immediately. The state of the VM is not
   saved beforehand, and data may be lost. (This is equivalent to selecting the
   "Reset" item in the "Machine" menu of the GUI.)
-EOM
+HEREDOC
 reset() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
@@ -964,7 +922,7 @@ reset() {
 
 # ---------------------------------------------------------------------- resume
 
-desc "resume" <<EOM
+desc "resume" <<HEREDOC
 Usage:
   ${_ME} resume (<name> | <uuid>)
 
@@ -973,7 +931,7 @@ Description:
 
   Undo a previous pause command. (This is equivalent to selecting the "Resume"
   item in the "Machine" menu of the GUI.)
-EOM
+HEREDOC
 resume() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
@@ -985,7 +943,7 @@ resume() {
 
 # ------------------------------------------------------------------------ show
 
-desc "show" <<EOM
+desc "show" <<HEREDOC
 Usage:
   ${_ME} show (<name> | <uuid>)
 
@@ -993,7 +951,7 @@ Description:
   Command: \`VBoxManage showvminfo <vm>\`
 
   Show information about a particular virtual machine.
-EOM
+HEREDOC
 show() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
@@ -1005,13 +963,13 @@ show() {
 
 # ----------------------------------------------------------------------- start
 
-desc "start" <<EOM
+desc "start" <<HEREDOC
 Usage:
   ${_ME} start (<name> | <uuid>) [--headless]
 
 Description:
   Start the VM with the given name or UUID.
-EOM
+HEREDOC
 start() {
   local headless=
   local id=
@@ -1039,7 +997,7 @@ start() {
 
 # ---------------------------------------------------------------------- status
 
-desc "status" <<EOM
+desc "status" <<HEREDOC
 Usage:
   ${_ME} status [(<name> | <uuid>) [--long|-l]]
 
@@ -1050,7 +1008,7 @@ Description:
   When no argument has been passed, this acts as an alias for
   \`${_ME} list status\` and displays the status for all of the VMs. When
   passed a VM name or UUID, the status aka state of that VM is displayed.
-EOM
+HEREDOC
 status() {
   local id=
   local status_string=
@@ -1091,7 +1049,7 @@ status() {
 
 # ------------------------------------------------------------------------ stop
 
-desc "stop" <<EOM
+desc "stop" <<HEREDOC
 Usage:
   ${_ME} stop (<name> | <uuid>)
 
@@ -1102,7 +1060,7 @@ Description:
   equivalent to selecting the "Close" item in the "Machine" menu of the GUI or
   pressing the window's close button, and then selecting "Save the machine
   state" in the dialog.)
-EOM
+HEREDOC
 stop() {
   local id="${1:-}"
   if [[ -z "${id}" ]]
@@ -1112,13 +1070,13 @@ stop() {
   VBoxManage controlvm "${id}" savestate
 }
 
-desc "halt" <<EOM
+desc "halt" <<HEREDOC
 Alias for \`$_ME stop\`.
 
 \`$_ME help stop\`:
 ---
-$(_print_desc "stop")
-EOM
+$(desc --get "stop")
+HEREDOC
 halt() {
   $_ME stop "$@"
 }
