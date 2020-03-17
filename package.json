@@ -20,7 +20,11 @@
     "command-line",
     "bash",
     "virtual-machine",
-    "vm"
+    "vm",
+    "cli",
+    "shell",
+    "prompt",
+    "terminal"
   ],
   "author": "William Melody",
   "license": "MIT",
