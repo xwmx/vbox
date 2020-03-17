@@ -865,7 +865,7 @@ Description:
     https://www.virtualbox.org/manual/ch08.html
 HEREDOC
 manage() {
-  if [[ -z "${_COMMAND_PARAMETERS[@]:-}" ]]
+  if [[ -z "${_COMMAND_PARAMETERS[*]:-}" ]]
   then
     VBoxManage
   else
