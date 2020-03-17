@@ -32,7 +32,7 @@ IFS=$'\n\t'
 #
 # Manually set this to to current version of the program. Adhere to the
 # semantic versioning specification: http://semver.org
-_VERSION="1.1.2"
+_VERSION="1.2.0"
 
 # $DEFAULT_COMMAND
 #
