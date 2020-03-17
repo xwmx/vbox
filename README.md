@@ -23,6 +23,14 @@ To install with [Homebrew](http://brew.sh/):
 brew install alphabetum/taps/vbox
 ```
 
+### npm
+
+To install with [npm](https://www.npmjs.com/package/vbox.sh):
+
+```bash
+npm install --global vbox.sh
+```
+
 ### bpkg
 
 To install with [bpkg](http://www.bpkg.io/):
