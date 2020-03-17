@@ -1,7 +1,31 @@
 {
-  "name": "vbox",
+  "name": "vbox.sh",
   "version": "1.1.2",
   "description": "A streamlined interface for VBoxManage, the VirtualBox command line tool.",
   "global": true,
-  "install": "make install"
+  "install": "make install",
+  "bin": {
+    "vbox": "./vbox"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alphabetum/vbox.git"
+  },
+  "keywords": [
+    "vboxmanage",
+    "virtualbox",
+    "command-line",
+    "bash",
+    "virtual-machine",
+    "vm"
+  ],
+  "author": "William Melody",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/alphabetum/vbox/issues"
+  },
+  "homepage": "https://github.com/alphabetum/vbox#readme"
 }
