@@ -20,7 +20,7 @@ used commands.
 To install with [Homebrew](http://brew.sh/):
 
 ```bash
-brew install alphabetum/taps/vbox
+brew install xwmx/taps/vbox
 ```
 
 ### npm
@@ -36,7 +36,7 @@ npm install --global vbox.sh
 To install with [bpkg](http://www.bpkg.io/):
 
 ```bash
-bpkg install alphabetum/vbox
+bpkg install xwmx/vbox
 ```
 
 ### Manual
@@ -45,7 +45,7 @@ To install manually, simply add the `vbox` script to your `$PATH`. If
 you already have a `~/bin` directory, you can use the following command:
 
 ```bash
-curl -L https://raw.github.com/alphabetum/vbox/master/vbox \
+curl -L https://raw.github.com/xwmx/vbox/master/vbox \
   -o ~/bin/vbox && chmod +x ~/bin/vbox
 ```
 

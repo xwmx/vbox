@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/alphabetum/vbox.git"
+    "url": "git+https://github.com/xwmx/vbox.git"
   },
   "keywords": [
     "vboxmanage",
@@ -29,7 +29,7 @@
   "author": "William Melody",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/alphabetum/vbox/issues"
+    "url": "https://github.com/xwmx/vbox/issues"
   },
-  "homepage": "https://github.com/alphabetum/vbox#readme"
+  "homepage": "https://github.com/xwmx/vbox#readme"
 }
