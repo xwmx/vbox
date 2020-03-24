@@ -24,7 +24,8 @@
     "cli",
     "shell",
     "prompt",
-    "terminal"
+    "terminal",
+    "vbox"
   ],
   "author": "William Melody",
   "license": "MIT",
