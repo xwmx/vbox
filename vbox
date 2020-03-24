@@ -612,6 +612,9 @@ Global Options:
 Help:
   ${_ME} help [<command>]
 
+Home:
+  https://github.com/xwmx/vbox
+
 $(commands)
 HEREDOC
   fi
