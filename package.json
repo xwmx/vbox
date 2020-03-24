@@ -1,6 +1,6 @@
 {
   "name": "vbox.sh",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A streamlined interface for VBoxManage, the VirtualBox command line tool.",
   "global": true,
   "install": "make install",
