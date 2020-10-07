@@ -22,7 +22,8 @@ used commands.
 To install with [Homebrew](http://brew.sh/):
 
 ```bash
-brew install xwmx/taps/vbox
+brew tap xwmx/taps
+brew install vbox
 ```
 
 ### npm
